@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Virtual Try-On Makeup · Tencent RTC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/detail.css">
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-dots"></div>
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+</div>
+
+<header class="site-header">
+  <div class="inner">
+    <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
+      <img src="../assets/logo.png" alt="Tencent RTC" class="site-logo" />
+    </a>
+    <nav class="header-nav">
+      <a class="nav-link" href="#">Demo</a>
+      <a class="nav-link" href="#">Docs</a>
+      <a class="nav-link" href="#">Help &#9662;</a>
+      <a class="nav-link" href="#">English &#9662;</a>
+      <a class="nav-link user" href="#">
+        <span class="avatar"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0062FB"/><stop offset="100%" stop-color="#00D0FF"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text></svg></span>
+        Jason
+      </a>
+    </nav>
+  </div>
+</header>
+
+<div class="back-bar">
+  <a href="../index.html" class="back-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to all scenarios
+  </a>
+</div>
+
+<section class="detail-hero">
+  <div class="breadcrumb">
+    <a href="../index.html">All scenarios</a>
+    <span class="sep">/</span>
+    <span>Retail &amp; E-commerce</span>
+    <span class="sep">/</span>
+    <span style="color:var(--ink-2);">Virtual Try-On Makeup</span>
+  </div>
+  <h1 class="detail-title">Virtual Try-On Makeup</h1>
+  <p class="detail-sub">Real-time AR beauty effects on live video. Shoppers try lipstick, foundation, and eyeshadow before buying.</p>
+  <div class="hero-tags">
+    <span class="tag ">Call</span>
+    <span class="tag tag-ai">AR</span>
+  </div>
+  <div class="hero-actions">
+    <button id="copyPromptBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Prompt
+    </button>
+    <a href="#overview" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Jump to guide
+    </a>
+  </div>
+</section>
+
+<div class="video-box">
+  <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
+    <div class="video-thumb">
+      <img src="../assets/scenarios/virtual-makeup.png" alt="Virtual Try-On Makeup" />
+    </div>
+    <div class="play-btn"></div>
+    <div class="video-caption">
+      <span class="dot-live"></span>
+      2 min · Scenario walkthrough
+    </div>
+  </div>
+</div>
+
+<div class="detail-main">
+  <aside class="toc">
+    <div class="toc-title">On this page</div>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#features">Key features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#prompt">AI Build Prompt</a></li>
+      <li class="sub"><a href="#tech-stack">Tech stack</a></li>
+      <li class="sub"><a href="#schema">Database schema</a></li>
+      <li class="sub"><a href="#frontend">Frontend</a></li>
+      <li class="sub"><a href="#backend">Backend APIs</a></li>
+      <li class="sub"><a href="#config">Configuration</a></li>
+      <li class="sub"><a href="#notes">Critical notes</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+
+    <h2 id="overview">Overview</h2>
+    <p><strong>Virtual Try-On Makeup</strong> is a mobile shopping feature that lets customers see how
+    makeup products look on their face in real time using AR. They can try lipsticks, foundations, eyeshadows,
+    and blush through the camera, compare before/after, and purchase directly. Beauty consultants can join
+    video calls to provide personalized advice.</p>
+    <div class="callout">
+      <strong>Why Tencent RTC?</strong> TRTC's real-time video pipeline supports custom video processing plugins, allowing AR face mesh overlays to be applied before encoding. Combined with Tencent's AI face detection SDK, you get 128-point face landmarks at 30fps.
+    </div>
+
+    <h2 id="features">Key features</h2>
+    <ul>
+      <li><strong>Real-time AR try-on</strong> — lipstick, foundation, eyeshadow, blush applied on live camera feed at 30fps.</li>
+      <li><strong>128-point face mesh</strong> — precise landmark detection for natural-looking makeup placement.</li>
+      <li><strong>Before/After toggle</strong> — swipe or tap to compare with and without makeup.</li>
+      <li><strong>Product catalog integration</strong> — tap a shade to instantly apply; buy button leads to checkout.</li>
+      <li><strong>1-on-1 beauty consultation</strong> — video call with consultant who can see your AR try-on in real time.</li>
+      <li><strong>Photo capture & share</strong> — save try-on looks and share to social media.</li>
+    </ul>
+
+    <h2 id="architecture">Architecture</h2>
+    <p>
+      This scenario leverages Tencent TRTC as the real-time communication backbone.
+      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
+      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
+    </p>
+
+    <h2 id="prompt">AI Build Prompt</h2>
+    <p>The sections below are extracted from the full build prompt for easy browsing.
+       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+
+    <h3 id="tech-stack">Tech stack</h3>
+    <div class="callout">
+      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
+      backend, databases, TRTC integration, AI services, and third-party APIs.
+    </div>
+
+    <h3 id="schema">Database schema</h3>
+    <p>The prompt includes a complete Prisma schema definition with all models,
+       relationships, and field types needed for this scenario.</p>
+
+    <h3 id="frontend">Frontend</h3>
+    <p>Detailed screen-by-screen specifications covering layouts, components,
+       interactions, and state management for every user-facing feature.</p>
+
+    <h3 id="backend">Backend APIs</h3>
+    <p>Complete API route definitions with request/response contracts,
+       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+
+    <h3 id="config">Configuration</h3>
+    <p>Full <code>.env.example</code> with all required environment variables,
+       plus Docker Compose setup for local development.</p>
+
+    <h3 id="notes">Critical implementation notes</h3>
+    <p>Key gotchas, security considerations, and performance tuning tips
+       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+
+    <div class="callout" style="margin-top:40px;">
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
+      AI coding assistant. The full prompt contains every detail needed to generate complete,
+      runnable code — nothing truncated.
+    </div>
+
+  </main>
+</div>
+
+<script type="text/plain" id="rawPrompt">
+You are a senior full-stack mobile engineer. Help me build a Virtual Try-On Makeup app — a mobile e-commerce feature where shoppers can see makeup products on their face in real time using AR, get personalized beauty consultations via video call, and purchase products directly.
+
+---
+
+## Tech Stack
+
+**Mobile (choose one):**
+- React Native 0.73 + TypeScript + Expo
+- OR Flutter + Dart
+
+**Backend:** Node.js + Fastify + Prisma ORM
+
+**Databases:**
+- MySQL — products, users, orders, consultations
+- Redis — session cache, product popularity ranking
+
+**Real-time A/V:** Tencent TRTC
+- 1-on-1 video calls with beauty consultants
+- Custom video processing plugin for AR overlay before encoding
+
+**AR / Face Detection:**
+- Tencent AI Face SDK (128-point face landmarks)
+- Custom shader/canvas rendering for makeup overlay
+
+**Storage:** Tencent Cloud COS (product images, user photos)
+**Payments:** Stripe / local payment gateway
+**Push:** Firebase FCM + APNs
+
+---
+
+## Database Schema (Prisma)
+
+- `User` — id, name, avatar, skinTone, createdAt
+- `Product` — id, name, brand, category (lipstick/foundation/eyeshadow/blush), shades (JSON array of {name, hexColor, textureUrl}), price, imageUrl, inStock
+- `TryOnSession` — id, userId, productId, shadeIndex, photoUrl, createdAt
+- `Consultation` — id, userId, consultantId, roomId, status, startedAt, endedAt, notes
+- `Order` — id, userId, items (JSON), totalPrice, status, createdAt
+- `Consultant` — id, userId, name, avatar, speciality, rating, available
+
+---
+
+## Frontend — Core Screens
+
+### 1. AR Try-On Camera Screen
+- Full-screen camera with real-time face detection
+- Bottom product carousel: scroll through shades
+- Tap shade → instant AR overlay on face (lipstick on lips, eyeshadow on eyelids, etc.)
+- Before/After toggle button (split-screen or tap-to-compare)
+- "Capture" button to save photo
+- "Add to Cart" floating button
+- "Call Consultant" button for live video advice
+
+### 2. Product Catalog
+- Categories: Lipstick, Foundation, Eyeshadow, Blush
+- Each product card: product image, name, brand, price, shade count
+- "Try It" button → opens camera with product pre-selected
+
+### 3. Consultation Call Screen
+- 1-on-1 video call with beauty consultant
+- Consultant can see shopper's AR try-on in real time (shared video stream)
+- Chat overlay for product links
+- Consultant can remotely switch the shopper's shade (signaling via IM)
+
+### 4. My Looks Gallery
+- Grid of saved try-on photos
+- Each photo: product used, shade, date
+- Share to Instagram / WhatsApp
+
+### 5. Cart & Checkout
+- Standard e-commerce cart with product images
+- Shipping address, payment
+
+---
+
+## AR Pipeline
+
+### Face Mesh Rendering (client-side):
+1. Capture camera frame (30fps)
+2. Run Tencent AI Face SDK → 128 face landmarks
+3. Map product texture to face regions:
+   - Lipstick → upper/lower lip contour (landmarks 52-63)
+   - Foundation → full face mesh with skin-tone blending
+   - Eyeshadow → eyelid area (landmarks 33-41)
+   - Blush → cheek area (landmarks 28-32)
+4. Render overlay using GPU shader (OpenGL ES / Metal)
+5. Blend with original frame (adjustable opacity for natural look)
+6. Output to TRTC video track (for consultation sharing)
+
+---
+
+## Backend — API Routes
+
+### Products
+- `GET /api/products?category=` — list products with shades
+- `GET /api/products/:id` — product detail with all shade textures
+
+### Try-On
+- `POST /api/tryon/save` — save try-on photo to COS, create TryOnSession record
+- `GET /api/tryon/history` — user's saved looks
+
+### Consultation
+- `POST /api/consultation/request` — match with available consultant, create TRTC room
+- `POST /api/trtc/token` — generate userSig for consultation call
+- `PUT /api/consultation/:id/end` — end call, save notes
+
+### Orders
+- `POST /api/order/create` — create order from cart
+- `GET /api/order/:id` — order status
+
+---
+
+## Configuration
+
+`.env.example`:
+```
+DATABASE_URL=
+REDIS_URL=
+TRTC_SDK_APP_ID=
+TRTC_SECRET_KEY=
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+TENCENT_REGION=ap-singapore
+COS_BUCKET=
+STRIPE_SECRET_KEY=
+FIREBASE_SERVICE_ACCOUNT_JSON=
+JWT_SECRET=
+TENCENT_AI_FACE_APP_ID=
+TENCENT_AI_FACE_APP_KEY=
+```
+
+---
+
+## Critical Implementation Notes
+
+1. **AR performance** — face detection + rendering must run on GPU at 30fps. Use Metal (iOS) / Vulkan (Android) shaders. Never do makeup rendering on CPU.
+2. **Skin tone adaptation** — foundation blending must account for user's skin tone. Use a calibration step or auto-detect from face region pixels.
+3. **Consultation video** — the AR-overlaid video (with makeup) is what gets sent to the consultant via TRTC, not the raw camera feed. Apply AR before TRTC encoding.
+4. **Texture assets** — each shade needs a pre-authored texture map (PNG with alpha). Store on COS, cache locally.
+5. **Low-light handling** — face detection degrades in low light. Show a "Better lighting needed" prompt when confidence drops below threshold.
+6. **Privacy** — try-on photos are stored per-user and never shared without explicit consent. Camera frames are processed on-device only.
+
+---
+
+Output complete, runnable code for every file. Include full TypeScript types, error handling, and loading states throughout. Do not truncate any file.
+</script>
+
+<footer class="site-footer">
+  &copy; 2026 Tencent Cloud. All rights reserved.
+</footer>
+
+<script src="../_shared/detail.js"></script>
+</body>
+</html>

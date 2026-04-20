@@ -1,5 +1,5 @@
 .DS_Store
-v*.html
+/v[0-9]*.html
 _scripts/
 .workbuddy/
 node_modules/

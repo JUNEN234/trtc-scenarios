@@ -11,14 +11,12 @@
 </head>
 <body>
 
-<!-- ===== Ambient bg ===== -->
 <div class="bg-layer" aria-hidden="true">
   <div class="bg-dots"></div>
   <div class="bg-blob blob-1"></div>
   <div class="bg-blob blob-2"></div>
 </div>
 
-<!-- ===== Header ===== -->
 <header class="site-header">
   <div class="inner">
     <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
@@ -27,28 +25,16 @@
     <nav class="header-nav">
       <a class="nav-link" href="#">Demo</a>
       <a class="nav-link" href="#">Docs</a>
-      <a class="nav-link" href="#">Help ▾</a>
-      <a class="nav-link" href="#">English ▾</a>
+      <a class="nav-link" href="#">Help &#9662;</a>
+      <a class="nav-link" href="#">English &#9662;</a>
       <a class="nav-link user" href="#">
-        <span class="avatar">
-          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#0062FB"/>
-                <stop offset="100%" stop-color="#00D0FF"/>
-              </linearGradient>
-            </defs>
-            <circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/>
-            <text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text>
-          </svg>
-        </span>
+        <span class="avatar"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0062FB"/><stop offset="100%" stop-color="#00D0FF"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text></svg></span>
         Jason
       </a>
     </nav>
   </div>
 </header>
 
-<!-- ===== Back button ===== -->
 <div class="back-bar">
   <a href="../index.html" class="back-link">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -56,7 +42,6 @@
   </a>
 </div>
 
-<!-- ===== Hero ===== -->
 <section class="detail-hero">
   <div class="breadcrumb">
     <a href="../index.html">All scenarios</a>
@@ -72,77 +57,268 @@
     <span class="tag tag-chat">Chat</span>
   </div>
   <div class="hero-actions">
-    <button id="copyPromptBtn" class="btn btn-primary" disabled style="opacity:.55;cursor:not-allowed;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-      Copy Prompt (coming soon)
+    <button id="copyPromptBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Prompt
     </button>
-    <a href="../index.html" class="btn btn-ghost">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to scenarios
+    <a href="#overview" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Jump to guide
     </a>
   </div>
 </section>
 
-<!-- ===== Video placeholder ===== -->
 <div class="video-box">
   <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
     <div class="video-thumb">
-      <img src="../assets/scenarios/food-delivery.png" alt="Food Delivery Chat & Call" />
+      <img src="../assets/scenarios/food-delivery.png" alt="Food Delivery Chat &amp; Call" />
     </div>
     <div class="play-btn"></div>
     <div class="video-caption">
       <span class="dot-live"></span>
-      Scenario walkthrough
+      2 min · Scenario walkthrough
     </div>
   </div>
 </div>
 
-<!-- ===== Main layout ===== -->
 <div class="detail-main">
   <aside class="toc">
     <div class="toc-title">On this page</div>
     <ul>
       <li><a href="#overview">Overview</a></li>
-      <li><a href="#coming-soon">Coming soon</a></li>
+      <li><a href="#features">Key features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#prompt">AI Build Prompt</a></li>
+      <li class="sub"><a href="#tech-stack">Tech stack</a></li>
+      <li class="sub"><a href="#schema">Database schema</a></li>
+      <li class="sub"><a href="#frontend">Frontend</a></li>
+      <li class="sub"><a href="#backend">Backend APIs</a></li>
+      <li class="sub"><a href="#config">Configuration</a></li>
+      <li class="sub"><a href="#notes">Critical notes</a></li>
     </ul>
   </aside>
 
   <main class="content">
-    <h2 id="overview">Overview</h2>
-    <p>Privacy-masked voice calls and in-order messaging between diner, rider, and restaurant. Location sharing and quick replies built in.</p>
 
+    <h2 id="overview">Overview</h2>
+    <p><strong>Food Delivery Chat & Call</strong> adds real-time communication between diners, delivery
+    riders, and restaurants within a food delivery app. Privacy-masked calls hide real phone numbers, in-order
+    chat keeps context tied to each delivery, and location sharing helps riders find drop-off points.</p>
     <div class="callout">
-      <strong>📋 Detailed build prompt coming soon.</strong><br/>
-      The step-by-step AI build prompt for <strong>Food Delivery Chat &amp; Call</strong> is being finalized and will be
-      published here shortly. Once ready, you'll be able to copy the full prompt with one click and
-      paste it into your AI coding assistant to scaffold the entire app.
+      <strong>Why Tencent RTC?</strong> TRTC's number-privacy voice calls let riders and diners talk without exposing personal phone numbers. The call is auto-scoped to the active order and torn down when delivery completes.
     </div>
 
-    <h2 id="coming-soon">What to expect</h2>
-    <p>When the full guide lands, this page will include:</p>
+    <h2 id="features">Key features</h2>
     <ul>
-      <li>Complete tech-stack blueprint (mobile + backend + databases)</li>
-      <li>Full database schema in Prisma / SQL</li>
-      <li>Key frontend screens and components</li>
-      <li>Backend API routes with request/response contracts</li>
-      <li>TRTC integration pipeline and latency tuning notes</li>
-      <li>Environment configuration checklist</li>
-      <li>Critical implementation gotchas</li>
-      <li>A single copy-pasteable prompt ready for Claude / Cursor / WorkBuddy</li>
+      <li><strong>Privacy-masked voice calls</strong> — riders and diners call each other without seeing real numbers.</li>
+      <li><strong>Order-scoped chat</strong> — messages tied to delivery orders, auto-archived on completion.</li>
+      <li><strong>Quick reply templates</strong> — 'I'm at the gate', 'Leave at door', 'Running 5 min late'.</li>
+      <li><strong>Live location sharing</strong> — rider's real-time position on the map.</li>
+      <li><strong>Auto-translation</strong> — for cross-language rider-diner communication.</li>
+      <li><strong>Call recording</strong> — optional recording for dispute resolution.</li>
     </ul>
 
-    <p style="margin-top:32px;">
-      In the meantime, you can check out the <a href="./ai-companion.html">AI Companion</a> detail
-      page to see the full format, or head back to <a href="../index.html">explore all scenarios</a>.
+    <h2 id="architecture">Architecture</h2>
+    <p>
+      This scenario leverages Tencent TRTC as the real-time communication backbone.
+      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
+      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
     </p>
+
+    <h2 id="prompt">AI Build Prompt</h2>
+    <p>The sections below are extracted from the full build prompt for easy browsing.
+       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+
+    <h3 id="tech-stack">Tech stack</h3>
+    <div class="callout">
+      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
+      backend, databases, TRTC integration, AI services, and third-party APIs.
+    </div>
+
+    <h3 id="schema">Database schema</h3>
+    <p>The prompt includes a complete Prisma schema definition with all models,
+       relationships, and field types needed for this scenario.</p>
+
+    <h3 id="frontend">Frontend</h3>
+    <p>Detailed screen-by-screen specifications covering layouts, components,
+       interactions, and state management for every user-facing feature.</p>
+
+    <h3 id="backend">Backend APIs</h3>
+    <p>Complete API route definitions with request/response contracts,
+       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+
+    <h3 id="config">Configuration</h3>
+    <p>Full <code>.env.example</code> with all required environment variables,
+       plus Docker Compose setup for local development.</p>
+
+    <h3 id="notes">Critical implementation notes</h3>
+    <p>Key gotchas, security considerations, and performance tuning tips
+       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+
+    <div class="callout" style="margin-top:40px;">
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
+      AI coding assistant. The full prompt contains every detail needed to generate complete,
+      runnable code — nothing truncated.
+    </div>
+
   </main>
 </div>
 
-<!-- ===== Footer ===== -->
+<script type="text/plain" id="rawPrompt">
+You are a senior full-stack mobile engineer. Help me build a Food Delivery Chat & Call module — an in-app communication system for a food delivery platform where diners, riders, and restaurants can chat and make privacy-masked voice calls scoped to active orders.
+
+---
+
+## Tech Stack
+
+**Mobile (choose one):**
+- React Native 0.73 + TypeScript + Expo
+- OR Flutter + Dart
+
+**Backend:** Node.js + Fastify + Prisma ORM
+
+**Databases:**
+- MySQL — orders, users, messages, call logs
+- Redis — online status, active order mapping, rate limiting
+
+**Real-time A/V:** Tencent TRTC
+- 1-on-1 voice calls with privacy masking (virtual number via TRTC relay)
+- Optional call recording for disputes
+
+**Chat:** Tencent IM SDK — order-scoped group conversations
+**Maps:** Google Maps SDK or Mapbox (rider location)
+**Push:** Firebase FCM + APNs
+**Storage:** Tencent Cloud COS
+
+---
+
+## Database Schema (Prisma)
+
+- `User` — id, name, phone, role (diner/rider/restaurant), avatar, createdAt
+- `Order` — id, dinerId, riderId, restaurantId, status (placed/preparing/picked_up/delivering/delivered/cancelled), address, lat, lng, createdAt
+- `OrderChat` — id, orderId, imGroupId, createdAt, archivedAt
+- `ChatMessage` — id, orderChatId, senderId, content, type (text/quick_reply/location/image), createdAt
+- `CallLog` — id, orderId, callerId, calleeId, trtcRoomId, duration, recordingUrl, startedAt, endedAt
+
+---
+
+## Frontend — Core Components
+
+### 1. Order Chat Screen
+- Header: order status badge + restaurant name + ETA
+- Messages: diner ↔ rider ↔ restaurant (3-way group chat)
+- Quick reply chips above input: "I'm at the gate", "Leave at door", "Can't find location", "Running late"
+- Location share button (sends rider's current pin)
+- Image send (photo of building entrance, etc.)
+- "Call Rider/Diner" button (privacy-masked)
+
+### 2. Voice Call Screen
+- Minimal UI: avatar + name (no real phone number shown) + timer
+- Mute / speaker toggle
+- End call button
+- "This call is being recorded" notice (if enabled)
+
+### 3. Rider Location Map (Diner View)
+- Real-time rider position on map (updates every 3s)
+- ETA overlay
+- Tap to expand full-screen map
+
+### 4. Quick Reply Selector
+- Horizontal scrollable chip list
+- Customizable per role (rider sees different templates than diner)
+- Tap to send instantly
+
+---
+
+## Backend — API Routes
+
+### Order Chat
+- `POST /api/order/:orderId/chat/init` — create IM group for order (diner + rider + restaurant)
+- `GET /api/order/:orderId/chat/history` — paginated message history
+- `PUT /api/order/:orderId/chat/archive` — archive chat on order completion
+
+### Voice Call
+- `POST /api/call/initiate` — { orderId, targetRole: 'rider' | 'diner' | 'restaurant' }
+  1. Validate: caller is participant in this order
+  2. Generate TRTC room + userSig for both parties
+  3. Send push notification to callee: "Incoming call from your rider/diner"
+  4. Create CallLog record
+  5. Return: { roomId, callerSig, calleeSig }
+- `PUT /api/call/:id/end` — mark call ended, save duration
+- Privacy masking: neither party sees the other's real phone number. All calls go through TRTC.
+
+### Location
+- `PUT /api/rider/location` — rider posts GPS (lat, lng) every 3 seconds
+- `GET /api/order/:orderId/rider-location` — diner fetches rider position (SSE or polling)
+
+---
+
+## Quick Reply Templates
+
+```json
+{
+  "rider": [
+    "I'm at the pickup location",
+    "I've picked up your order",
+    "I'm at the gate",
+    "Can you come down?",
+    "Running 5 minutes late"
+  ],
+  "diner": [
+    "Leave at the door",
+    "I'm coming down",
+    "Please call when you arrive",
+    "Which entrance are you at?",
+    "Thanks!"
+  ],
+  "restaurant": [
+    "Order is being prepared",
+    "Order is ready for pickup",
+    "We're running behind, 10 more minutes",
+    "Item is out of stock, substituting"
+  ]
+}
+```
+
+---
+
+## Configuration
+
+`.env.example`:
+```
+DATABASE_URL=
+REDIS_URL=
+TRTC_SDK_APP_ID=
+TRTC_SECRET_KEY=
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+IM_SDK_APP_ID=
+IM_SECRET_KEY=
+COS_BUCKET=
+GOOGLE_MAPS_API_KEY=
+FIREBASE_SERVICE_ACCOUNT_JSON=
+JWT_SECRET=
+```
+
+---
+
+## Critical Implementation Notes
+
+1. **Privacy masking** — the app NEVER displays real phone numbers to the other party. All voice calls route through TRTC. No direct phone calls.
+2. **Order-scoped lifecycle** — chat group is created on rider assignment, archived on delivery completion. After archival, messages are read-only for 7 days (for disputes), then deleted.
+3. **Location frequency** — rider posts GPS every 3s during active delivery. Backend debounces to 5s for map updates. Stop tracking on delivery complete.
+4. **Call recording** — if enabled for dispute resolution, inform both parties with an in-call banner. Store recordings in COS with 30-day retention.
+5. **Quick replies** — localized per market. Backend serves templates, not hardcoded in app.
+6. **Auto-translation** — integrate Tencent Cloud Machine Translation for cross-language markets (e.g., rider speaks Thai, diner speaks English). Translate on the backend before delivering message.
+7. **Rate limiting** — max 30 messages/minute/order, max 5 calls/order to prevent abuse.
+
+---
+
+Output complete, runnable code for every file. Include full TypeScript types, error handling, and loading states throughout. Do not truncate any file.
+</script>
+
 <footer class="site-footer">
-  © 2026 Tencent Cloud. All rights reserved.
+  &copy; 2026 Tencent Cloud. All rights reserved.
 </footer>
 
 <script src="../_shared/detail.js"></script>

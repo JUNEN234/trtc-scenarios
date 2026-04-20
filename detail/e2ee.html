@@ -11,14 +11,12 @@
 </head>
 <body>
 
-<!-- ===== Ambient bg ===== -->
 <div class="bg-layer" aria-hidden="true">
   <div class="bg-dots"></div>
   <div class="bg-blob blob-1"></div>
   <div class="bg-blob blob-2"></div>
 </div>
 
-<!-- ===== Header ===== -->
 <header class="site-header">
   <div class="inner">
     <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
@@ -27,28 +25,16 @@
     <nav class="header-nav">
       <a class="nav-link" href="#">Demo</a>
       <a class="nav-link" href="#">Docs</a>
-      <a class="nav-link" href="#">Help ▾</a>
-      <a class="nav-link" href="#">English ▾</a>
+      <a class="nav-link" href="#">Help &#9662;</a>
+      <a class="nav-link" href="#">English &#9662;</a>
       <a class="nav-link user" href="#">
-        <span class="avatar">
-          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#0062FB"/>
-                <stop offset="100%" stop-color="#00D0FF"/>
-              </linearGradient>
-            </defs>
-            <circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/>
-            <text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text>
-          </svg>
-        </span>
+        <span class="avatar"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0062FB"/><stop offset="100%" stop-color="#00D0FF"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text></svg></span>
         Jason
       </a>
     </nav>
   </div>
 </header>
 
-<!-- ===== Back button ===== -->
 <div class="back-bar">
   <a href="../index.html" class="back-link">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -56,7 +42,6 @@
   </a>
 </div>
 
-<!-- ===== Hero ===== -->
 <section class="detail-hero">
   <div class="breadcrumb">
     <a href="../index.html">All scenarios</a>
@@ -72,20 +57,17 @@
     <span class="tag tag-chat">Chat</span>
   </div>
   <div class="hero-actions">
-    <button id="copyPromptBtn" class="btn btn-primary" disabled style="opacity:.55;cursor:not-allowed;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-      Copy Prompt (coming soon)
+    <button id="copyPromptBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Prompt
     </button>
-    <a href="../index.html" class="btn btn-ghost">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to scenarios
+    <a href="#overview" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Jump to guide
     </a>
   </div>
 </section>
 
-<!-- ===== Video placeholder ===== -->
 <div class="video-box">
   <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
     <div class="video-thumb">
@@ -94,55 +76,278 @@
     <div class="play-btn"></div>
     <div class="video-caption">
       <span class="dot-live"></span>
-      Scenario walkthrough
+      2 min · Scenario walkthrough
     </div>
   </div>
 </div>
 
-<!-- ===== Main layout ===== -->
 <div class="detail-main">
   <aside class="toc">
     <div class="toc-title">On this page</div>
     <ul>
       <li><a href="#overview">Overview</a></li>
-      <li><a href="#coming-soon">Coming soon</a></li>
+      <li><a href="#features">Key features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#prompt">AI Build Prompt</a></li>
+      <li class="sub"><a href="#tech-stack">Tech stack</a></li>
+      <li class="sub"><a href="#schema">Database schema</a></li>
+      <li class="sub"><a href="#frontend">Frontend</a></li>
+      <li class="sub"><a href="#backend">Backend APIs</a></li>
+      <li class="sub"><a href="#config">Configuration</a></li>
+      <li class="sub"><a href="#notes">Critical notes</a></li>
     </ul>
   </aside>
 
   <main class="content">
-    <h2 id="overview">Overview</h2>
-    <p>Client-side key exchange keeps audio, video, and messages unreadable to anyone else — built for regulated industries.</p>
 
+    <h2 id="overview">Overview</h2>
+    <p><strong>End-to-End Encryption (E2EE)</strong> adds a layer of client-side encryption on top of
+    TRTC calls and IM messages so that no intermediary — including Tencent's servers — can read or listen to
+    the content. Designed for regulated industries: banking, healthcare, legal, and government.</p>
     <div class="callout">
-      <strong>📋 Detailed build prompt coming soon.</strong><br/>
-      The step-by-step AI build prompt for <strong>End-to-End Encryption</strong> is being finalized and will be
-      published here shortly. Once ready, you'll be able to copy the full prompt with one click and
-      paste it into your AI coding assistant to scaffold the entire app.
+      <strong>Why Tencent RTC?</strong> TRTC already encrypts all streams with DTLS-SRTP, but E2EE adds an additional client-side encryption layer using customer-managed keys. TRTC's custom audio/video processing hooks allow encrypting before the media hits the server.
     </div>
 
-    <h2 id="coming-soon">What to expect</h2>
-    <p>When the full guide lands, this page will include:</p>
+    <h2 id="features">Key features</h2>
     <ul>
-      <li>Complete tech-stack blueprint (mobile + backend + databases)</li>
-      <li>Full database schema in Prisma / SQL</li>
-      <li>Key frontend screens and components</li>
-      <li>Backend API routes with request/response contracts</li>
-      <li>TRTC integration pipeline and latency tuning notes</li>
-      <li>Environment configuration checklist</li>
-      <li>Critical implementation gotchas</li>
-      <li>A single copy-pasteable prompt ready for Claude / Cursor / WorkBuddy</li>
+      <li><strong>Client-side key exchange</strong> — ECDH key agreement between call participants, no keys touch the server.</li>
+      <li><strong>Encrypted voice & video</strong> — AES-256-GCM encryption applied before TRTC transport.</li>
+      <li><strong>Encrypted IM messages</strong> — client-side encrypt/decrypt with per-conversation keys.</li>
+      <li><strong>Key verification</strong> — safety number display for manual verification (like Signal).</li>
+      <li><strong>Forward secrecy</strong> — new ephemeral keys per session.</li>
+      <li><strong>Compliance dashboard</strong> — admin panel showing encryption status, key rotation logs, audit trail.</li>
     </ul>
 
-    <p style="margin-top:32px;">
-      In the meantime, you can check out the <a href="./ai-companion.html">AI Companion</a> detail
-      page to see the full format, or head back to <a href="../index.html">explore all scenarios</a>.
+    <h2 id="architecture">Architecture</h2>
+    <p>
+      This scenario leverages Tencent TRTC as the real-time communication backbone.
+      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
+      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
     </p>
+
+    <h2 id="prompt">AI Build Prompt</h2>
+    <p>The sections below are extracted from the full build prompt for easy browsing.
+       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+
+    <h3 id="tech-stack">Tech stack</h3>
+    <div class="callout">
+      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
+      backend, databases, TRTC integration, AI services, and third-party APIs.
+    </div>
+
+    <h3 id="schema">Database schema</h3>
+    <p>The prompt includes a complete Prisma schema definition with all models,
+       relationships, and field types needed for this scenario.</p>
+
+    <h3 id="frontend">Frontend</h3>
+    <p>Detailed screen-by-screen specifications covering layouts, components,
+       interactions, and state management for every user-facing feature.</p>
+
+    <h3 id="backend">Backend APIs</h3>
+    <p>Complete API route definitions with request/response contracts,
+       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+
+    <h3 id="config">Configuration</h3>
+    <p>Full <code>.env.example</code> with all required environment variables,
+       plus Docker Compose setup for local development.</p>
+
+    <h3 id="notes">Critical implementation notes</h3>
+    <p>Key gotchas, security considerations, and performance tuning tips
+       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+
+    <div class="callout" style="margin-top:40px;">
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
+      AI coding assistant. The full prompt contains every detail needed to generate complete,
+      runnable code — nothing truncated.
+    </div>
+
   </main>
 </div>
 
-<!-- ===== Footer ===== -->
+<script type="text/plain" id="rawPrompt">
+You are a senior full-stack engineer specializing in security. Help me build an End-to-End Encryption (E2EE) module for a communication app — adding client-side encryption for voice calls, video calls, and chat messages on top of Tencent TRTC and Tencent IM, so that no server (including Tencent's) can access plaintext content.
+
+---
+
+## Tech Stack
+
+**Mobile (choose one):**
+- React Native 0.73 + TypeScript
+- OR Flutter + Dart
+
+**Backend:** Node.js + Fastify + Prisma ORM
+
+**Databases:**
+- MySQL — users, public keys, audit logs
+- Redis — session key cache (encrypted), online status
+
+**Real-time A/V:** Tencent TRTC
+- Custom audio/video frame processing for encrypt/decrypt
+- `trtc-react-native` / `trtc_sdk`
+
+**Chat:** Tencent IM SDK with custom message payload (encrypted blobs)
+
+**Cryptography:**
+- libsodium (`sodium-native` for Node.js, `libsodium-wrappers` or native bindings for mobile)
+- ECDH (X25519) for key exchange
+- AES-256-GCM for symmetric encryption
+- HKDF for key derivation
+
+---
+
+## Database Schema (Prisma)
+
+- `User` — id, name, avatar, createdAt
+- `IdentityKey` — id, userId, publicKey (X25519 public key, base64), createdAt, revokedAt
+- `PreKey` — id, userId, keyId, publicKey, used, createdAt (one-time pre-keys for async key exchange)
+- `SignedPreKey` — id, userId, publicKey, signature, rotatedAt
+- `AuditLog` — id, action (key_generated/key_rotated/session_started/verification_completed), userId, metadata (JSON), createdAt
+
+---
+
+## Cryptographic Protocol
+
+### Key Hierarchy:
+```
+Identity Key (long-term, X25519)
+  └── Signed Pre-Key (rotated weekly)
+       └── One-Time Pre-Key (single use)
+            └── Session Key (ephemeral, per call/conversation)
+                 └── Message Key (ratcheted per message)
+```
+
+### Key Exchange (X3DH — Extended Triple Diffie-Hellman):
+1. Alice fetches Bob's key bundle: { identityKey, signedPreKey, oneTimePreKey }
+2. Alice generates ephemeral key pair
+3. Alice computes: `DH1 = DH(Alice_Identity, Bob_SignedPreKey)`, `DH2 = DH(Alice_Ephemeral, Bob_Identity)`, `DH3 = DH(Alice_Ephemeral, Bob_SignedPreKey)`, `DH4 = DH(Alice_Ephemeral, Bob_OneTimePreKey)`
+4. Shared secret = `HKDF(DH1 || DH2 || DH3 || DH4)`
+5. Derive session key + chain key from shared secret
+
+### Double Ratchet (for chat messages):
+- Each message uses a unique message key derived from the chain
+- Sending ratchet step: advance chain key → derive message key → encrypt
+- Receiving: match ratchet state → derive same message key → decrypt
+- DH ratchet step on each reply: new ephemeral DH to achieve forward secrecy
+
+### Media Encryption (for TRTC calls):
+1. Establish session key via X3DH before call starts
+2. For each audio/video frame:
+   a. Generate per-frame IV (incrementing counter, 12 bytes)
+   b. Encrypt frame payload with AES-256-GCM using session key + IV
+   c. Prepend 1-byte header (key ID) + 12-byte IV to encrypted frame
+   d. Pass to TRTC's custom frame processing callback
+3. On receive: extract IV + key ID → decrypt → pass to decoder
+
+---
+
+## Frontend — Core Screens
+
+### 1. Encrypted Call Screen
+- Standard TRTC call UI
+- 🔒 lock icon in header indicating E2EE active
+- "Verify" button → shows safety number (hash of both parties' identity keys)
+- Call quality indicator (E2EE adds ~2ms overhead per frame)
+
+### 2. Encrypted Chat Screen
+- Standard IM chat UI
+- 🔒 badge on each message bubble
+- Messages stored encrypted on device (SQLite + SQLCipher)
+- "Verify Contact" option in chat settings
+
+### 3. Safety Number Verification Screen
+- Display 60-digit safety number (derived from both identity keys)
+- QR code for in-person scanning
+- "Mark as Verified" button
+
+### 4. Key Management Screen (Settings)
+- Current identity key fingerprint
+- Signed pre-key rotation status
+- "Regenerate Keys" option (warns: will break existing sessions)
+- Audit log viewer
+
+---
+
+## Backend — API Routes
+
+### Key Distribution
+- `POST /api/keys/register` — upload identity key + signed pre-key + batch of one-time pre-keys
+- `GET /api/keys/:userId/bundle` — fetch key bundle for initiating session (consumes one-time pre-key)
+- `POST /api/keys/prekeys/replenish` — upload more one-time pre-keys when running low
+
+### Audit
+- `POST /api/audit/log` — client reports key events (generation, rotation, verification)
+- `GET /api/audit/logs` — admin: view audit trail
+
+**Important: The server NEVER sees private keys or session keys. It only stores and distributes public keys.**
+
+---
+
+## TRTC Custom Frame Processing
+
+### Encrypt (sender side):
+```typescript
+trtc.setCustomEncryptionCallback({
+  onEncryptAudioFrame(frame: TRTCAudioFrame): TRTCAudioFrame {
+    const iv = generateIV(frameCounter++);
+    const encrypted = aes256gcm.encrypt(sessionKey, iv, frame.data);
+    return { ...frame, data: concat(KEY_ID, iv, encrypted) };
+  },
+  onEncryptVideoFrame(frame: TRTCVideoFrame): TRTCVideoFrame {
+    const iv = generateIV(frameCounter++);
+    const encrypted = aes256gcm.encrypt(sessionKey, iv, frame.data);
+    return { ...frame, data: concat(KEY_ID, iv, encrypted) };
+  }
+});
+```
+
+### Decrypt (receiver side):
+```typescript
+trtc.setCustomDecryptionCallback({
+  onDecryptAudioFrame(frame): TRTCAudioFrame {
+    const { keyId, iv, ciphertext } = parseFrame(frame.data);
+    const decrypted = aes256gcm.decrypt(getKey(keyId), iv, ciphertext);
+    return { ...frame, data: decrypted };
+  },
+  // same for video
+});
+```
+
+---
+
+## Configuration
+
+`.env.example`:
+```
+DATABASE_URL=
+REDIS_URL=
+TRTC_SDK_APP_ID=
+TRTC_SECRET_KEY=
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+IM_SDK_APP_ID=
+IM_SECRET_KEY=
+JWT_SECRET=
+```
+
+---
+
+## Critical Implementation Notes
+
+1. **The server is untrusted.** Private keys and session keys NEVER leave the client device. The server is a public-key directory only.
+2. **Pre-key exhaustion** — when one-time pre-keys run low (< 10), client must auto-replenish. If none available, fall back to signed pre-key only (slightly less forward secrecy).
+3. **Key rotation** — signed pre-key rotates weekly. Identity key is permanent unless user explicitly regenerates.
+4. **Safety numbers** — derived as `SHA-256(sort(Alice_IdentityKey + Bob_IdentityKey))`, displayed as 60-digit numeric string.
+5. **Frame overhead** — each encrypted frame adds 1 (keyId) + 12 (IV) + 16 (GCM tag) = 29 bytes. Negligible for video, ~3% overhead for audio.
+6. **Local encrypted storage** — chat history on device must be encrypted at rest using SQLCipher or similar. Key derived from user's device passcode.
+7. **Group E2EE** — for group calls, use Sender Keys protocol: each participant has a sender key, distributed to group members via pairwise E2EE channels.
+
+---
+
+Output complete, runnable code for every file. Include full TypeScript types, error handling, and loading states throughout. Do not truncate any file.
+</script>
+
 <footer class="site-footer">
-  © 2026 Tencent Cloud. All rights reserved.
+  &copy; 2026 Tencent Cloud. All rights reserved.
 </footer>
 
 <script src="../_shared/detail.js"></script>

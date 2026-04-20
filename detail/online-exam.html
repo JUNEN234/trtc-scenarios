@@ -11,14 +11,12 @@
 </head>
 <body>
 
-<!-- ===== Ambient bg ===== -->
 <div class="bg-layer" aria-hidden="true">
   <div class="bg-dots"></div>
   <div class="bg-blob blob-1"></div>
   <div class="bg-blob blob-2"></div>
 </div>
 
-<!-- ===== Header ===== -->
 <header class="site-header">
   <div class="inner">
     <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
@@ -27,28 +25,16 @@
     <nav class="header-nav">
       <a class="nav-link" href="#">Demo</a>
       <a class="nav-link" href="#">Docs</a>
-      <a class="nav-link" href="#">Help ▾</a>
-      <a class="nav-link" href="#">English ▾</a>
+      <a class="nav-link" href="#">Help &#9662;</a>
+      <a class="nav-link" href="#">English &#9662;</a>
       <a class="nav-link user" href="#">
-        <span class="avatar">
-          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#0062FB"/>
-                <stop offset="100%" stop-color="#00D0FF"/>
-              </linearGradient>
-            </defs>
-            <circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/>
-            <text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text>
-          </svg>
-        </span>
+        <span class="avatar"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0062FB"/><stop offset="100%" stop-color="#00D0FF"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text></svg></span>
         Jason
       </a>
     </nav>
   </div>
 </header>
 
-<!-- ===== Back button ===== -->
 <div class="back-bar">
   <a href="../index.html" class="back-link">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -56,7 +42,6 @@
   </a>
 </div>
 
-<!-- ===== Hero ===== -->
 <section class="detail-hero">
   <div class="breadcrumb">
     <a href="../index.html">All scenarios</a>
@@ -72,20 +57,17 @@
     <span class="tag tag-conf">Conference</span>
   </div>
   <div class="hero-actions">
-    <button id="copyPromptBtn" class="btn btn-primary" disabled style="opacity:.55;cursor:not-allowed;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-      Copy Prompt (coming soon)
+    <button id="copyPromptBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Prompt
     </button>
-    <a href="../index.html" class="btn btn-ghost">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to scenarios
+    <a href="#overview" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Jump to guide
     </a>
   </div>
 </section>
 
-<!-- ===== Video placeholder ===== -->
 <div class="video-box">
   <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
     <div class="video-thumb">
@@ -94,55 +76,246 @@
     <div class="play-btn"></div>
     <div class="video-caption">
       <span class="dot-live"></span>
-      Scenario walkthrough
+      2 min · Scenario walkthrough
     </div>
   </div>
 </div>
 
-<!-- ===== Main layout ===== -->
 <div class="detail-main">
   <aside class="toc">
     <div class="toc-title">On this page</div>
     <ul>
       <li><a href="#overview">Overview</a></li>
-      <li><a href="#coming-soon">Coming soon</a></li>
+      <li><a href="#features">Key features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#prompt">AI Build Prompt</a></li>
+      <li class="sub"><a href="#tech-stack">Tech stack</a></li>
+      <li class="sub"><a href="#schema">Database schema</a></li>
+      <li class="sub"><a href="#frontend">Frontend</a></li>
+      <li class="sub"><a href="#backend">Backend APIs</a></li>
+      <li class="sub"><a href="#config">Configuration</a></li>
+      <li class="sub"><a href="#notes">Critical notes</a></li>
     </ul>
   </aside>
 
   <main class="content">
-    <h2 id="overview">Overview</h2>
-    <p>Dual-camera proctoring, cloud recording, and AI behavior detection to keep remote exams fair and auditable.</p>
 
+    <h2 id="overview">Overview</h2>
+    <p><strong>Online Proctored Exam</strong> is a platform for conducting secure remote exams with
+    dual-camera proctoring (front + screen share), AI-powered behavior detection, cloud recording, and
+    real-time proctor oversight. Built for universities, certification bodies, and corporate training.</p>
     <div class="callout">
-      <strong>📋 Detailed build prompt coming soon.</strong><br/>
-      The step-by-step AI build prompt for <strong>Online Proctored Exam</strong> is being finalized and will be
-      published here shortly. Once ready, you'll be able to copy the full prompt with one click and
-      paste it into your AI coding assistant to scaffold the entire app.
+      <strong>Why Tencent RTC?</strong> TRTC's multi-stream publishing (camera + screen share simultaneously) powers dual-camera proctoring. Server-side recording captures everything for post-exam review. Low-latency conferencing lets proctors intervene in real time.
     </div>
 
-    <h2 id="coming-soon">What to expect</h2>
-    <p>When the full guide lands, this page will include:</p>
+    <h2 id="features">Key features</h2>
     <ul>
-      <li>Complete tech-stack blueprint (mobile + backend + databases)</li>
-      <li>Full database schema in Prisma / SQL</li>
-      <li>Key frontend screens and components</li>
-      <li>Backend API routes with request/response contracts</li>
-      <li>TRTC integration pipeline and latency tuning notes</li>
-      <li>Environment configuration checklist</li>
-      <li>Critical implementation gotchas</li>
-      <li>A single copy-pasteable prompt ready for Claude / Cursor / WorkBuddy</li>
+      <li><strong>Dual-camera proctoring</strong> — front camera + screen share streamed simultaneously.</li>
+      <li><strong>AI behavior detection</strong> — face absence, multiple faces, eye tracking anomaly, phone detection.</li>
+      <li><strong>Real-time proctor dashboard</strong> — grid view of all examinees, flag alerts, intervene via voice.</li>
+      <li><strong>Cloud recording</strong> — full session recording for post-exam audit.</li>
+      <li><strong>Lockdown browser</strong> — prevents tab switching, copy/paste, external app access.</li>
+      <li><strong>Automated flagging</strong> — suspicious events timestamped and logged for review.</li>
     </ul>
 
-    <p style="margin-top:32px;">
-      In the meantime, you can check out the <a href="./ai-companion.html">AI Companion</a> detail
-      page to see the full format, or head back to <a href="../index.html">explore all scenarios</a>.
+    <h2 id="architecture">Architecture</h2>
+    <p>
+      This scenario leverages Tencent TRTC as the real-time communication backbone.
+      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
+      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
     </p>
+
+    <h2 id="prompt">AI Build Prompt</h2>
+    <p>The sections below are extracted from the full build prompt for easy browsing.
+       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+
+    <h3 id="tech-stack">Tech stack</h3>
+    <div class="callout">
+      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
+      backend, databases, TRTC integration, AI services, and third-party APIs.
+    </div>
+
+    <h3 id="schema">Database schema</h3>
+    <p>The prompt includes a complete Prisma schema definition with all models,
+       relationships, and field types needed for this scenario.</p>
+
+    <h3 id="frontend">Frontend</h3>
+    <p>Detailed screen-by-screen specifications covering layouts, components,
+       interactions, and state management for every user-facing feature.</p>
+
+    <h3 id="backend">Backend APIs</h3>
+    <p>Complete API route definitions with request/response contracts,
+       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+
+    <h3 id="config">Configuration</h3>
+    <p>Full <code>.env.example</code> with all required environment variables,
+       plus Docker Compose setup for local development.</p>
+
+    <h3 id="notes">Critical implementation notes</h3>
+    <p>Key gotchas, security considerations, and performance tuning tips
+       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+
+    <div class="callout" style="margin-top:40px;">
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
+      AI coding assistant. The full prompt contains every detail needed to generate complete,
+      runnable code — nothing truncated.
+    </div>
+
   </main>
 </div>
 
-<!-- ===== Footer ===== -->
+<script type="text/plain" id="rawPrompt">
+You are a senior full-stack engineer. Help me build an Online Proctored Exam platform — a web + mobile system for conducting secure remote exams with dual-camera proctoring, AI behavior detection, cloud recording, and real-time proctor monitoring.
+
+---
+
+## Tech Stack
+
+**Frontend:** React 18 + TypeScript + Vite (web exam client) + React Native (mobile proctor app)
+**Backend:** Node.js + Fastify + Prisma ORM
+**Databases:** MySQL + Redis
+**Real-time A/V:** Tencent TRTC
+- Examinee: publish 2 streams (camera + screen share)
+- Proctor: subscribe to multiple examinee streams (grid view)
+- Server-side cloud recording
+
+**AI Detection:** Tencent Cloud AI (face detection, object detection)
+**Storage:** Tencent Cloud COS (recordings, exam papers)
+**Push:** Firebase FCM
+
+---
+
+## Database Schema (Prisma)
+
+- `User` — id, name, email, role (examinee/proctor/admin)
+- `Exam` — id, title, duration, startAt, endAt, createdBy, status (draft/active/ended)
+- `ExamSession` — id, examId, examineeId, proctorId, trtcRoomId, status (waiting/in_progress/submitted/flagged), startedAt, endedAt, recordingUrl
+- `Question` — id, examId, type (multiple_choice/essay/coding), content, options (JSON), correctAnswer, points
+- `Answer` — id, sessionId, questionId, response, submittedAt
+- `ProctorFlag` — id, sessionId, type (face_absent/multiple_faces/phone_detected/eye_anomaly/tab_switch), timestamp, severity, aiConfidence, reviewedBy, resolution
+
+---
+
+## Frontend — Examinee Web Client
+
+### 1. Pre-Exam Check Screen
+- Camera permission check + preview
+- Screen share permission check
+- Microphone check
+- System requirements validation (browser, OS)
+- Identity verification: take photo → match with profile
+- "Start Exam" button (only active when all checks pass)
+
+### 2. Exam Screen
+- Split layout: questions panel (left 70%) + timer (top right) + webcam preview (bottom right, small)
+- Question navigation sidebar
+- Answer input (MCQ radio buttons, essay textarea, code editor)
+- "Submit" button with confirmation dialog
+- Lockdown: disable right-click, Ctrl+C/V, detect tab switch → flag
+
+### 3. Post-Exam Screen
+- "Exam submitted successfully" confirmation
+- Score (if auto-graded)
+- Flag summary (if any)
+
+---
+
+## Frontend — Proctor Dashboard (Web)
+
+### 1. Grid View
+- 4×4 grid (or configurable) of examinee camera feeds
+- Each tile: name, exam progress %, flag count badge
+- Click tile → expand to full view with screen share + camera side-by-side
+
+### 2. Alert Panel
+- Real-time flag notifications (sorted by severity)
+- Each alert: examinee name, flag type, timestamp, AI confidence score, thumbnail
+- Actions: "Dismiss", "Warn Examinee" (sends audio message), "Terminate Exam"
+
+### 3. Session Detail
+- Side-by-side: camera feed + screen share
+- Timeline scrubber for recorded footage
+- Flag markers on timeline
+- Notes field for proctor
+
+---
+
+## AI Behavior Detection Pipeline
+
+Run on backend, processing camera stream snapshots every 2 seconds:
+
+1. Capture frame from TRTC recording stream
+2. Run Tencent Cloud Face Detection:
+   - No face detected → flag `face_absent`
+   - Multiple faces → flag `multiple_faces`
+3. Run object detection:
+   - Phone/tablet detected → flag `phone_detected`
+4. Eye gaze estimation:
+   - Sustained off-screen gaze (> 5s) → flag `eye_anomaly`
+5. Client-side detection (via JavaScript):
+   - Tab switch / window blur → flag `tab_switch`
+   - Copy/paste attempt → flag `clipboard_violation`
+
+Each flag: log to DB with timestamp, AI confidence, frame snapshot URL.
+
+---
+
+## Backend — API Routes
+
+### Exam Management
+- CRUD for exams and questions (admin only)
+- `POST /api/exam/:id/start` — activate exam, create TRTC rooms
+
+### Session
+- `POST /api/session/join` — examinee joins, get TRTC token (publish camera + screen)
+- `PUT /api/session/:id/submit` — submit answers, end session
+- `GET /api/session/:id/recording` — signed URL for recorded session
+
+### Proctoring
+- `GET /api/proctor/sessions` — list active sessions for assigned proctor
+- `POST /api/proctor/flag` — manually flag a session
+- `POST /api/proctor/warn/:sessionId` — send audio warning to examinee
+- `POST /api/proctor/terminate/:sessionId` — force-end exam
+
+---
+
+## Configuration
+
+`.env.example`:
+```
+DATABASE_URL=
+REDIS_URL=
+TRTC_SDK_APP_ID=
+TRTC_SECRET_KEY=
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+TENCENT_REGION=ap-singapore
+COS_BUCKET=
+TENCENT_AI_APP_ID=
+TENCENT_AI_APP_KEY=
+FIREBASE_SERVICE_ACCOUNT_JSON=
+JWT_SECRET=
+```
+
+---
+
+## Critical Implementation Notes
+
+1. **Dual-stream** — examinee publishes 2 TRTC streams: main camera (user stream) + screen share (aux stream). Both recorded.
+2. **Lockdown enforcement** — client-side only (JavaScript). Determined cheaters can bypass. AI detection is the real enforcement layer.
+3. **AI latency** — detection runs on 2-second snapshots, not real-time video. Flags may have 2-5 second delay. Acceptable for proctoring.
+4. **Recording storage** — recordings can be large (1-3 hour exams). Use COS lifecycle rules to auto-delete after retention period (e.g., 6 months).
+5. **Scalability** — each proctor watches up to 16 examinees. For 1000-examinee exam, need 63+ proctors or use AI-only proctoring with human review of flags.
+6. **Privacy** — recordings contain biometric data. Comply with GDPR/local privacy laws. Get explicit consent before exam starts.
+7. **Network resilience** — if examinee disconnects, auto-pause timer, resume on reconnect. Max 3 disconnections before auto-flag.
+
+---
+
+Output complete, runnable code for every file. Do not truncate any file.
+</script>
+
 <footer class="site-footer">
-  © 2026 Tencent Cloud. All rights reserved.
+  &copy; 2026 Tencent Cloud. All rights reserved.
 </footer>
 
 <script src="../_shared/detail.js"></script>

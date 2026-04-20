@@ -11,14 +11,12 @@
 </head>
 <body>
 
-<!-- ===== Ambient bg ===== -->
 <div class="bg-layer" aria-hidden="true">
   <div class="bg-dots"></div>
   <div class="bg-blob blob-1"></div>
   <div class="bg-blob blob-2"></div>
 </div>
 
-<!-- ===== Header ===== -->
 <header class="site-header">
   <div class="inner">
     <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
@@ -27,28 +25,16 @@
     <nav class="header-nav">
       <a class="nav-link" href="#">Demo</a>
       <a class="nav-link" href="#">Docs</a>
-      <a class="nav-link" href="#">Help ▾</a>
-      <a class="nav-link" href="#">English ▾</a>
+      <a class="nav-link" href="#">Help &#9662;</a>
+      <a class="nav-link" href="#">English &#9662;</a>
       <a class="nav-link user" href="#">
-        <span class="avatar">
-          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#0062FB"/>
-                <stop offset="100%" stop-color="#00D0FF"/>
-              </linearGradient>
-            </defs>
-            <circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/>
-            <text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text>
-          </svg>
-        </span>
+        <span class="avatar"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0062FB"/><stop offset="100%" stop-color="#00D0FF"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text></svg></span>
         Jason
       </a>
     </nav>
   </div>
 </header>
 
-<!-- ===== Back button ===== -->
 <div class="back-bar">
   <a href="../index.html" class="back-link">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -56,7 +42,6 @@
   </a>
 </div>
 
-<!-- ===== Hero ===== -->
 <section class="detail-hero">
   <div class="breadcrumb">
     <a href="../index.html">All scenarios</a>
@@ -72,77 +57,190 @@
     <span class="tag tag-chat">Chat</span>
   </div>
   <div class="hero-actions">
-    <button id="copyPromptBtn" class="btn btn-primary" disabled style="opacity:.55;cursor:not-allowed;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-      Copy Prompt (coming soon)
+    <button id="copyPromptBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Prompt
     </button>
-    <a href="../index.html" class="btn btn-ghost">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to scenarios
+    <a href="#overview" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Jump to guide
     </a>
   </div>
 </section>
 
-<!-- ===== Video placeholder ===== -->
 <div class="video-box">
   <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
     <div class="video-thumb">
-      <img src="../assets/scenarios/ride-hailing.png" alt="Ride-Hailing Chat & Call" />
+      <img src="../assets/scenarios/ride-hailing.png" alt="Ride-Hailing Chat &amp; Call" />
     </div>
     <div class="play-btn"></div>
     <div class="video-caption">
       <span class="dot-live"></span>
-      Scenario walkthrough
+      2 min · Scenario walkthrough
     </div>
   </div>
 </div>
 
-<!-- ===== Main layout ===== -->
 <div class="detail-main">
   <aside class="toc">
     <div class="toc-title">On this page</div>
     <ul>
       <li><a href="#overview">Overview</a></li>
-      <li><a href="#coming-soon">Coming soon</a></li>
+      <li><a href="#features">Key features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#prompt">AI Build Prompt</a></li>
+      <li class="sub"><a href="#tech-stack">Tech stack</a></li>
+      <li class="sub"><a href="#schema">Database schema</a></li>
+      <li class="sub"><a href="#frontend">Frontend</a></li>
+      <li class="sub"><a href="#backend">Backend APIs</a></li>
+      <li class="sub"><a href="#config">Configuration</a></li>
+      <li class="sub"><a href="#notes">Critical notes</a></li>
     </ul>
   </aside>
 
   <main class="content">
-    <h2 id="overview">Overview</h2>
-    <p>Anonymous rider-driver voice calls with masked numbers, live location pings, and trip-scoped chat history.</p>
 
+    <h2 id="overview">Overview</h2>
+    <p><strong>Ride-Hailing Chat & Call</strong> adds privacy-protected communication between passengers
+    and drivers in a ride-hailing app. All calls are anonymous (masked numbers), chat is scoped to the active trip,
+    and the system automatically manages the communication lifecycle from dispatch to drop-off.</p>
     <div class="callout">
-      <strong>📋 Detailed build prompt coming soon.</strong><br/>
-      The step-by-step AI build prompt for <strong>Ride-Hailing Chat &amp; Call</strong> is being finalized and will be
-      published here shortly. Once ready, you'll be able to copy the full prompt with one click and
-      paste it into your AI coding assistant to scaffold the entire app.
+      <strong>Why Tencent RTC?</strong> TRTC handles anonymous voice calls without exposing phone numbers, with automatic room teardown when trips end. Signaling through IM keeps chat lightweight and trip-scoped.
     </div>
 
-    <h2 id="coming-soon">What to expect</h2>
-    <p>When the full guide lands, this page will include:</p>
+    <h2 id="features">Key features</h2>
     <ul>
-      <li>Complete tech-stack blueprint (mobile + backend + databases)</li>
-      <li>Full database schema in Prisma / SQL</li>
-      <li>Key frontend screens and components</li>
-      <li>Backend API routes with request/response contracts</li>
-      <li>TRTC integration pipeline and latency tuning notes</li>
-      <li>Environment configuration checklist</li>
-      <li>Critical implementation gotchas</li>
-      <li>A single copy-pasteable prompt ready for Claude / Cursor / WorkBuddy</li>
+      <li><strong>Anonymous voice calls</strong> — passenger and driver talk through TRTC without revealing phone numbers.</li>
+      <li><strong>Trip-scoped chat</strong> — messages auto-create on dispatch, auto-archive on trip end.</li>
+      <li><strong>Predefined messages</strong> — 'I'm at the pin', 'Red car', 'Running late' — one-tap send.</li>
+      <li><strong>Live location sharing</strong> — driver position + ETA updates on the map.</li>
+      <li><strong>Safety recording</strong> — all calls recorded for safety; accessible to support team only.</li>
+      <li><strong>Multi-language support</strong> — auto-translate between passenger and driver languages.</li>
     </ul>
 
-    <p style="margin-top:32px;">
-      In the meantime, you can check out the <a href="./ai-companion.html">AI Companion</a> detail
-      page to see the full format, or head back to <a href="../index.html">explore all scenarios</a>.
+    <h2 id="architecture">Architecture</h2>
+    <p>
+      This scenario leverages Tencent TRTC as the real-time communication backbone.
+      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
+      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
     </p>
+
+    <h2 id="prompt">AI Build Prompt</h2>
+    <p>The sections below are extracted from the full build prompt for easy browsing.
+       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+
+    <h3 id="tech-stack">Tech stack</h3>
+    <div class="callout">
+      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
+      backend, databases, TRTC integration, AI services, and third-party APIs.
+    </div>
+
+    <h3 id="schema">Database schema</h3>
+    <p>The prompt includes a complete Prisma schema definition with all models,
+       relationships, and field types needed for this scenario.</p>
+
+    <h3 id="frontend">Frontend</h3>
+    <p>Detailed screen-by-screen specifications covering layouts, components,
+       interactions, and state management for every user-facing feature.</p>
+
+    <h3 id="backend">Backend APIs</h3>
+    <p>Complete API route definitions with request/response contracts,
+       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+
+    <h3 id="config">Configuration</h3>
+    <p>Full <code>.env.example</code> with all required environment variables,
+       plus Docker Compose setup for local development.</p>
+
+    <h3 id="notes">Critical implementation notes</h3>
+    <p>Key gotchas, security considerations, and performance tuning tips
+       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+
+    <div class="callout" style="margin-top:40px;">
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
+      AI coding assistant. The full prompt contains every detail needed to generate complete,
+      runnable code — nothing truncated.
+    </div>
+
   </main>
 </div>
 
-<!-- ===== Footer ===== -->
+<script type="text/plain" id="rawPrompt">
+You are a senior full-stack mobile engineer. Help me build a Ride-Hailing Chat & Call module — an in-app communication system for a ride-hailing platform where passengers and drivers can chat and make anonymous voice calls scoped to active trips.
+
+---
+
+## Tech Stack
+
+**Mobile:** React Native 0.73 + TypeScript + Expo OR Flutter + Dart
+**Backend:** Node.js + Fastify + Prisma ORM
+**Databases:** MySQL + Redis
+**Real-time A/V:** Tencent TRTC (anonymous 1-on-1 voice calls)
+**Chat:** Tencent IM SDK (trip-scoped conversations)
+**Maps:** Google Maps / Mapbox
+**Push:** Firebase FCM + APNs
+
+---
+
+## Database Schema (Prisma)
+
+- `User` — id, name, phone, role (passenger/driver), avatar
+- `Trip` — id, passengerId, driverId, status (dispatched/en_route/arrived/in_trip/completed/cancelled), pickupLat, pickupLng, dropoffLat, dropoffLng, createdAt
+- `TripChat` — id, tripId, imGroupId, createdAt, archivedAt
+- `CallLog` — id, tripId, callerId, calleeId, trtcRoomId, duration, recordingUrl, startedAt, endedAt
+
+---
+
+## Frontend — Core Components
+
+### 1. Trip Chat
+- Inline chat overlay on the map screen
+- Predefined message chips: "I'm at the pin", "White Toyota", "Gate #3", "Running 2 min late"
+- Photo send (car photo, location screenshot)
+- "Call Driver/Passenger" button
+
+### 2. Voice Call
+- Compact in-app call UI (no phone number visible)
+- Mute / speaker / end call
+- "Call is recorded for safety" banner
+
+### 3. Driver Location (Passenger View)
+- Real-time car position on map, updated every 2s
+- ETA countdown
+
+---
+
+## Backend — API Routes
+
+- `POST /api/trip/:id/chat/init` — create IM group on dispatch
+- `POST /api/call/initiate` — generate TRTC room, push call notification
+- `PUT /api/trip/:id/complete` — archive chat, teardown call room
+- `PUT /api/driver/location` — GPS updates every 2s
+- `GET /api/trip/:id/driver-location` — passenger polls or SSE
+
+---
+
+## Configuration
+
+`.env.example`: same pattern as Food Delivery module (TRTC + IM + Maps + Firebase + JWT)
+
+---
+
+## Critical Implementation Notes
+
+1. **Number masking** — no real phone numbers ever shown. All calls via TRTC.
+2. **Trip-scoped lifecycle** — communication channels auto-teardown on trip complete/cancel.
+3. **Safety recording** — all calls recorded, stored in COS with 90-day retention, accessible only to safety/support team.
+4. **GPS frequency** — driver pushes every 2s during active trip. Backend aggregates to 3s for passenger map.
+5. **Predefined messages** — localized per market. Passenger and driver see different templates.
+6. **Auto-teardown** — if trip is cancelled, immediately archive chat and block further calls.
+
+---
+
+Output complete, runnable code for every file. Do not truncate any file.
+</script>
+
 <footer class="site-footer">
-  © 2026 Tencent Cloud. All rights reserved.
+  &copy; 2026 Tencent Cloud. All rights reserved.
 </footer>
 
 <script src="../_shared/detail.js"></script>

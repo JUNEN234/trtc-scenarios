@@ -11,14 +11,12 @@
 </head>
 <body>
 
-<!-- ===== Ambient bg ===== -->
 <div class="bg-layer" aria-hidden="true">
   <div class="bg-dots"></div>
   <div class="bg-blob blob-1"></div>
   <div class="bg-blob blob-2"></div>
 </div>
 
-<!-- ===== Header ===== -->
 <header class="site-header">
   <div class="inner">
     <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
@@ -27,28 +25,16 @@
     <nav class="header-nav">
       <a class="nav-link" href="#">Demo</a>
       <a class="nav-link" href="#">Docs</a>
-      <a class="nav-link" href="#">Help ▾</a>
-      <a class="nav-link" href="#">English ▾</a>
+      <a class="nav-link" href="#">Help &#9662;</a>
+      <a class="nav-link" href="#">English &#9662;</a>
       <a class="nav-link user" href="#">
-        <span class="avatar">
-          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#0062FB"/>
-                <stop offset="100%" stop-color="#00D0FF"/>
-              </linearGradient>
-            </defs>
-            <circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/>
-            <text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text>
-          </svg>
-        </span>
+        <span class="avatar"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0062FB"/><stop offset="100%" stop-color="#00D0FF"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text></svg></span>
         Jason
       </a>
     </nav>
   </div>
 </header>
 
-<!-- ===== Back button ===== -->
 <div class="back-bar">
   <a href="../index.html" class="back-link">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -56,7 +42,6 @@
   </a>
 </div>
 
-<!-- ===== Hero ===== -->
 <section class="detail-hero">
   <div class="breadcrumb">
     <a href="../index.html">All scenarios</a>
@@ -72,20 +57,17 @@
     <span class="tag tag-conf">Conference</span>
   </div>
   <div class="hero-actions">
-    <button id="copyPromptBtn" class="btn btn-primary" disabled style="opacity:.55;cursor:not-allowed;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-      Copy Prompt (coming soon)
+    <button id="copyPromptBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Prompt
     </button>
-    <a href="../index.html" class="btn btn-ghost">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to scenarios
+    <a href="#overview" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Jump to guide
     </a>
   </div>
 </section>
 
-<!-- ===== Video placeholder ===== -->
 <div class="video-box">
   <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
     <div class="video-thumb">
@@ -94,55 +76,236 @@
     <div class="play-btn"></div>
     <div class="video-caption">
       <span class="dot-live"></span>
-      Scenario walkthrough
+      2 min · Scenario walkthrough
     </div>
   </div>
 </div>
 
-<!-- ===== Main layout ===== -->
 <div class="detail-main">
   <aside class="toc">
     <div class="toc-title">On this page</div>
     <ul>
       <li><a href="#overview">Overview</a></li>
-      <li><a href="#coming-soon">Coming soon</a></li>
+      <li><a href="#features">Key features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#prompt">AI Build Prompt</a></li>
+      <li class="sub"><a href="#tech-stack">Tech stack</a></li>
+      <li class="sub"><a href="#schema">Database schema</a></li>
+      <li class="sub"><a href="#frontend">Frontend</a></li>
+      <li class="sub"><a href="#backend">Backend APIs</a></li>
+      <li class="sub"><a href="#config">Configuration</a></li>
+      <li class="sub"><a href="#notes">Critical notes</a></li>
     </ul>
   </aside>
 
   <main class="content">
-    <h2 id="overview">Overview</h2>
-    <p>Virtual prayer rooms and study groups with scheduled broadcasts, multi-language subtitles, and private audio rooms.</p>
 
+    <h2 id="overview">Overview</h2>
+    <p><strong>Religious Community</strong> is a mobile app for Muslim communities to gather virtually for
+    prayer sessions, Quran study groups, Friday sermons (Khutbah), and Islamic lectures. It combines scheduled
+    live audio/video broadcasts, private study rooms, prayer time alerts, and Quran recitation features.</p>
     <div class="callout">
-      <strong>📋 Detailed build prompt coming soon.</strong><br/>
-      The step-by-step AI build prompt for <strong>Religious Community</strong> is being finalized and will be
-      published here shortly. Once ready, you'll be able to copy the full prompt with one click and
-      paste it into your AI coding assistant to scaffold the entire app.
+      <strong>Why Tencent RTC?</strong> TRTC's audio room mode delivers crystal-clear recitation with minimal bandwidth, while conference mode supports study groups with up to 50 active participants. Scheduled room features and server-side recording let communities replay sessions.
     </div>
 
-    <h2 id="coming-soon">What to expect</h2>
-    <p>When the full guide lands, this page will include:</p>
+    <h2 id="features">Key features</h2>
     <ul>
-      <li>Complete tech-stack blueprint (mobile + backend + databases)</li>
-      <li>Full database schema in Prisma / SQL</li>
-      <li>Key frontend screens and components</li>
-      <li>Backend API routes with request/response contracts</li>
-      <li>TRTC integration pipeline and latency tuning notes</li>
-      <li>Environment configuration checklist</li>
-      <li>Critical implementation gotchas</li>
-      <li>A single copy-pasteable prompt ready for Claude / Cursor / WorkBuddy</li>
+      <li><strong>Scheduled prayer rooms</strong> — auto-open rooms at prayer times (Fajr, Dhuhr, Asr, Maghrib, Isha) with adhan playback.</li>
+      <li><strong>Group Quran study</strong> — up to 50 participants, teacher controls who reads, real-time verse highlighting.</li>
+      <li><strong>Friday Khutbah broadcast</strong> — one-to-many livestream with multi-language audio tracks.</li>
+      <li><strong>Private audio rooms</strong> — small study circles with hand-raise moderation.</li>
+      <li><strong>Prayer time notifications</strong> — location-based, accurate prayer times with push alerts.</li>
+      <li><strong>Cloud recording</strong> — all sessions recorded and available for replay.</li>
     </ul>
 
-    <p style="margin-top:32px;">
-      In the meantime, you can check out the <a href="./ai-companion.html">AI Companion</a> detail
-      page to see the full format, or head back to <a href="../index.html">explore all scenarios</a>.
+    <h2 id="architecture">Architecture</h2>
+    <p>
+      This scenario leverages Tencent TRTC as the real-time communication backbone.
+      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
+      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
     </p>
+
+    <h2 id="prompt">AI Build Prompt</h2>
+    <p>The sections below are extracted from the full build prompt for easy browsing.
+       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+
+    <h3 id="tech-stack">Tech stack</h3>
+    <div class="callout">
+      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
+      backend, databases, TRTC integration, AI services, and third-party APIs.
+    </div>
+
+    <h3 id="schema">Database schema</h3>
+    <p>The prompt includes a complete Prisma schema definition with all models,
+       relationships, and field types needed for this scenario.</p>
+
+    <h3 id="frontend">Frontend</h3>
+    <p>Detailed screen-by-screen specifications covering layouts, components,
+       interactions, and state management for every user-facing feature.</p>
+
+    <h3 id="backend">Backend APIs</h3>
+    <p>Complete API route definitions with request/response contracts,
+       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+
+    <h3 id="config">Configuration</h3>
+    <p>Full <code>.env.example</code> with all required environment variables,
+       plus Docker Compose setup for local development.</p>
+
+    <h3 id="notes">Critical implementation notes</h3>
+    <p>Key gotchas, security considerations, and performance tuning tips
+       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+
+    <div class="callout" style="margin-top:40px;">
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
+      AI coding assistant. The full prompt contains every detail needed to generate complete,
+      runnable code — nothing truncated.
+    </div>
+
   </main>
 </div>
 
-<!-- ===== Footer ===== -->
+<script type="text/plain" id="rawPrompt">
+You are a senior full-stack mobile engineer. Help me build a Religious Community app — a product where Muslim communities can join virtual prayer rooms, Quran study groups, Friday sermons, and Islamic lectures with scheduled broadcasts, multi-language support, and private audio rooms.
+
+---
+
+## Tech Stack
+
+**Mobile (choose one):**
+- React Native 0.73 + TypeScript + Expo
+- OR Flutter + Dart
+
+**Backend:** Node.js + Fastify + Prisma ORM
+
+**Databases:**
+- MySQL — relational data (users, rooms, sessions, bookmarks)
+- Redis — session state, prayer time cache, online presence
+
+**Real-time A/V:** Tencent TRTC
+- Audio rooms: `trtc-react-native` / `trtc_sdk`
+- Conference mode for study groups (up to 50 participants)
+- Server-side cloud recording via TRTC Recording API
+
+**Chat & Signaling:** Tencent IM SDK
+**Push Notifications:** Firebase FCM + APNs
+**Storage:** Tencent Cloud COS (recordings, Quran audio files)
+**Prayer Times:** Aladhan API (https://aladhan.com/prayer-times-api)
+**Scheduling:** `node-schedule`
+
+---
+
+## Database Schema (Prisma)
+
+- `User` — id, name, avatar, timezone, location (lat/lng), preferredLanguage, pushToken, createdAt
+- `Community` — id, name, description, avatarUrl, leaderId (→ User), memberCount, createdAt
+- `ScheduledSession` — id, communityId, title, type (prayer/study/khutbah/lecture), scheduledAt, duration, recurrence (daily/weekly/once), trtcRoomId, status, recordingUrl
+- `SessionParticipant` — id, sessionId, userId, role (host/speaker/listener), joinedAt, leftAt
+- `QuranBookmark` — id, userId, surah, ayah, note, createdAt
+- `Recording` — id, sessionId, url, duration, createdAt
+
+---
+
+## Frontend — Core Screens
+
+### 1. Home / Dashboard
+- Today's prayer times (auto-detected location) with countdown to next prayer
+- Upcoming sessions list (scrollable cards)
+- "Join Now" for live sessions, "Set Reminder" for upcoming
+- Quick-join buttons for each prayer room
+
+### 2. Prayer Room Screen
+- Audio-only room with participant avatars in a circle layout
+- Central area: current prayer phase indicator (e.g., "Isha — Recitation")
+- Mute/unmute for designated reciters only (host controls)
+- Adhan auto-play at session start
+- Leave button + session timer
+
+### 3. Quran Study Room
+- Video conference grid (up to 50 tiles)
+- Shared Quran viewer: synced surah/ayah display controlled by teacher
+- Hand-raise button for students
+- Teacher controls: assign reader, mute all, highlight verse
+- Chat panel for questions
+
+### 4. Khutbah / Lecture Broadcast
+- One-to-many audio/video stream
+- Multi-language audio track selector (Arabic, English, Urdu, Malay, Turkish)
+- Live translation overlay (optional)
+- Q&A panel: submit questions, host picks and reads
+
+### 5. Recordings Library
+- Browse past sessions by community and type
+- Audio player with speed control (0.5x–2x)
+- Bookmark moments
+
+### 6. Settings
+- Prayer calculation method (Umm al-Qura, ISNA, MWL, etc.)
+- Notification preferences per prayer time
+- Language preference
+
+---
+
+## Backend — API Routes
+
+### Sessions
+- `POST /api/session/create` — create scheduled session, auto-generate TRTC room
+- `GET /api/session/upcoming` — list upcoming sessions for user's communities
+- `GET /api/session/:id/join` — get TRTC token + join info
+- `PUT /api/session/:id/end` — end session, trigger recording save
+
+### Prayer Times
+- `GET /api/prayer-times?lat=&lng=&method=` — proxy Aladhan API, cache in Redis (TTL 24h)
+
+### Recordings
+- `GET /api/recordings/:communityId` — list recordings
+- `GET /api/recordings/:id/stream` — signed COS URL for playback
+
+### Push Notifications
+Scheduled jobs:
+- Prayer time alerts: 10 minutes before each prayer (per user timezone + location)
+- Session reminders: 15 minutes before scheduled sessions
+- New recording available notification
+
+---
+
+## Configuration
+
+`.env.example`:
+```
+DATABASE_URL=
+REDIS_URL=
+TRTC_SDK_APP_ID=
+TRTC_SECRET_KEY=
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+TENCENT_REGION=ap-singapore
+IM_SDK_APP_ID=
+IM_SECRET_KEY=
+COS_BUCKET=
+FIREBASE_SERVICE_ACCOUNT_JSON=
+JWT_SECRET=
+ALADHAN_API_BASE=https://api.aladhan.com/v1
+```
+
+---
+
+## Critical Implementation Notes
+
+1. **Prayer time accuracy** — cache per (lat/lng/method) combo in Redis. Recalculate daily. Support 6+ calculation methods.
+2. **Scheduled rooms** — use `node-schedule` to auto-create TRTC rooms 5 minutes before session time. Auto-end after scheduled duration + 15min grace.
+3. **Audio-only optimization** — for prayer rooms, disable video tracks entirely to save bandwidth. Use TRTC audio room mode.
+4. **Cloud recording** — enable TRTC server-side recording. On session end, move recording to COS and save URL.
+5. **Moderation** — host can mute/unmute any participant. Only designated speakers can unmute themselves.
+6. **Multi-language Khutbah** — use TRTC's audio mixing to support multiple language audio tracks in the same room. Viewers select which track to hear.
+7. **Respectful UX** — no music, no flashy animations. Calm, clean design. Use Islamic geometric patterns subtly.
+
+---
+
+Output complete, runnable code for every file. Include full TypeScript types, error handling, and loading states throughout. Do not truncate any file.
+</script>
+
 <footer class="site-footer">
-  © 2026 Tencent Cloud. All rights reserved.
+  &copy; 2026 Tencent Cloud. All rights reserved.
 </footer>
 
 <script src="../_shared/detail.js"></script>

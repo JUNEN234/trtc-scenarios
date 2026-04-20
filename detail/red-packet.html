@@ -11,14 +11,12 @@
 </head>
 <body>
 
-<!-- ===== Ambient bg ===== -->
 <div class="bg-layer" aria-hidden="true">
   <div class="bg-dots"></div>
   <div class="bg-blob blob-1"></div>
   <div class="bg-blob blob-2"></div>
 </div>
 
-<!-- ===== Header ===== -->
 <header class="site-header">
   <div class="inner">
     <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
@@ -27,28 +25,16 @@
     <nav class="header-nav">
       <a class="nav-link" href="#">Demo</a>
       <a class="nav-link" href="#">Docs</a>
-      <a class="nav-link" href="#">Help ▾</a>
-      <a class="nav-link" href="#">English ▾</a>
+      <a class="nav-link" href="#">Help &#9662;</a>
+      <a class="nav-link" href="#">English &#9662;</a>
       <a class="nav-link user" href="#">
-        <span class="avatar">
-          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#0062FB"/>
-                <stop offset="100%" stop-color="#00D0FF"/>
-              </linearGradient>
-            </defs>
-            <circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/>
-            <text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text>
-          </svg>
-        </span>
+        <span class="avatar"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0062FB"/><stop offset="100%" stop-color="#00D0FF"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text></svg></span>
         Jason
       </a>
     </nav>
   </div>
 </header>
 
-<!-- ===== Back button ===== -->
 <div class="back-bar">
   <a href="../index.html" class="back-link">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -56,7 +42,6 @@
   </a>
 </div>
 
-<!-- ===== Hero ===== -->
 <section class="detail-hero">
   <div class="breadcrumb">
     <a href="../index.html">All scenarios</a>
@@ -71,20 +56,17 @@
     <span class="tag tag-chat">Chat</span>
   </div>
   <div class="hero-actions">
-    <button id="copyPromptBtn" class="btn btn-primary" disabled style="opacity:.55;cursor:not-allowed;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-      Copy Prompt (coming soon)
+    <button id="copyPromptBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Prompt
     </button>
-    <a href="../index.html" class="btn btn-ghost">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to scenarios
+    <a href="#overview" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Jump to guide
     </a>
   </div>
 </section>
 
-<!-- ===== Video placeholder ===== -->
 <div class="video-box">
   <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
     <div class="video-thumb">
@@ -93,55 +75,262 @@
     <div class="play-btn"></div>
     <div class="video-caption">
       <span class="dot-live"></span>
-      Scenario walkthrough
+      2 min · Scenario walkthrough
     </div>
   </div>
 </div>
 
-<!-- ===== Main layout ===== -->
 <div class="detail-main">
   <aside class="toc">
     <div class="toc-title">On this page</div>
     <ul>
       <li><a href="#overview">Overview</a></li>
-      <li><a href="#coming-soon">Coming soon</a></li>
+      <li><a href="#features">Key features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#prompt">AI Build Prompt</a></li>
+      <li class="sub"><a href="#tech-stack">Tech stack</a></li>
+      <li class="sub"><a href="#schema">Database schema</a></li>
+      <li class="sub"><a href="#frontend">Frontend</a></li>
+      <li class="sub"><a href="#backend">Backend APIs</a></li>
+      <li class="sub"><a href="#config">Configuration</a></li>
+      <li class="sub"><a href="#notes">Critical notes</a></li>
     </ul>
   </aside>
 
   <main class="content">
-    <h2 id="overview">Overview</h2>
-    <p>Custom message type for lucky money transfers in 1v1 and group chats, backed by signaling and order state callbacks.</p>
 
+    <h2 id="overview">Overview</h2>
+    <p><strong>In-Chat Red Packet</strong> adds a lucky money (hongbao) feature to any chat app.
+    Users can send red packets in 1-on-1 or group conversations. Group red packets support "lucky draw"
+    (random split) and "equal split" modes. The feature needs atomic fund transfers, real-time claim
+    notifications, and expiry refunds.</p>
     <div class="callout">
-      <strong>📋 Detailed build prompt coming soon.</strong><br/>
-      The step-by-step AI build prompt for <strong>In-Chat Red Packet</strong> is being finalized and will be
-      published here shortly. Once ready, you'll be able to copy the full prompt with one click and
-      paste it into your AI coding assistant to scaffold the entire app.
+      <strong>Why Tencent RTC?</strong> While red packets are primarily a chat feature (powered by Tencent IM), TRTC integrates with IM for the signaling layer — enabling red packet rain during livestreams and video calls as an engagement mechanic.
     </div>
 
-    <h2 id="coming-soon">What to expect</h2>
-    <p>When the full guide lands, this page will include:</p>
+    <h2 id="features">Key features</h2>
     <ul>
-      <li>Complete tech-stack blueprint (mobile + backend + databases)</li>
-      <li>Full database schema in Prisma / SQL</li>
-      <li>Key frontend screens and components</li>
-      <li>Backend API routes with request/response contracts</li>
-      <li>TRTC integration pipeline and latency tuning notes</li>
-      <li>Environment configuration checklist</li>
-      <li>Critical implementation gotchas</li>
-      <li>A single copy-pasteable prompt ready for Claude / Cursor / WorkBuddy</li>
+      <li><strong>1-on-1 red packets</strong> — send fixed-amount hongbao in private chats.</li>
+      <li><strong>Group lucky draw</strong> — random split among N claimants (WeChat-style).</li>
+      <li><strong>Equal split</strong> — fixed amount per person in group.</li>
+      <li><strong>Expiry & refund</strong> — unclaimed red packets auto-refund after 24 hours.</li>
+      <li><strong>Claim animation</strong> — gold coin burst animation on open.</li>
+      <li><strong>Red packet history</strong> — sent/received ledger with totals.</li>
     </ul>
 
-    <p style="margin-top:32px;">
-      In the meantime, you can check out the <a href="./ai-companion.html">AI Companion</a> detail
-      page to see the full format, or head back to <a href="../index.html">explore all scenarios</a>.
+    <h2 id="architecture">Architecture</h2>
+    <p>
+      This scenario leverages Tencent TRTC as the real-time communication backbone.
+      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
+      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
     </p>
+
+    <h2 id="prompt">AI Build Prompt</h2>
+    <p>The sections below are extracted from the full build prompt for easy browsing.
+       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+
+    <h3 id="tech-stack">Tech stack</h3>
+    <div class="callout">
+      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
+      backend, databases, TRTC integration, AI services, and third-party APIs.
+    </div>
+
+    <h3 id="schema">Database schema</h3>
+    <p>The prompt includes a complete Prisma schema definition with all models,
+       relationships, and field types needed for this scenario.</p>
+
+    <h3 id="frontend">Frontend</h3>
+    <p>Detailed screen-by-screen specifications covering layouts, components,
+       interactions, and state management for every user-facing feature.</p>
+
+    <h3 id="backend">Backend APIs</h3>
+    <p>Complete API route definitions with request/response contracts,
+       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+
+    <h3 id="config">Configuration</h3>
+    <p>Full <code>.env.example</code> with all required environment variables,
+       plus Docker Compose setup for local development.</p>
+
+    <h3 id="notes">Critical implementation notes</h3>
+    <p>Key gotchas, security considerations, and performance tuning tips
+       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+
+    <div class="callout" style="margin-top:40px;">
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
+      AI coding assistant. The full prompt contains every detail needed to generate complete,
+      runnable code — nothing truncated.
+    </div>
+
   </main>
 </div>
 
-<!-- ===== Footer ===== -->
+<script type="text/plain" id="rawPrompt">
+You are a senior full-stack mobile engineer. Help me build an In-Chat Red Packet feature — a module for a chat app where users can send and receive lucky money (hongbao) in 1-on-1 and group conversations, with random split, equal split, expiry refunds, and real-time claim notifications.
+
+---
+
+## Tech Stack
+
+**Mobile (choose one):**
+- React Native 0.73 + TypeScript + Expo
+- OR Flutter + Dart
+
+**Backend:** Node.js + Fastify + Prisma ORM
+
+**Databases:**
+- MySQL — users, wallets, red packets, claims, transactions
+- Redis — distributed locks, claim counters, expiry queues
+
+**Chat & Signaling:** Tencent IM SDK (`@tencentcloud/chat`)
+- Custom message types for red packet send/claim/expire events
+- Server-side callbacks for claim notifications
+
+**Push:** Firebase FCM + APNs
+**Scheduling:** `node-schedule` (expiry refund job)
+
+---
+
+## Database Schema (Prisma)
+
+- `User` — id, name, avatar, createdAt
+- `Wallet` — id, userId, balance (Decimal), frozenBalance, currency, updatedAt
+- `RedPacket` — id, senderId, conversationId, conversationType (1v1/group), type (lucky/equal), totalAmount, remainingAmount, totalCount, remainingCount, greeting, status (active/expired/claimed_all), expiresAt, createdAt
+- `Claim` — id, redPacketId, claimerId, amount, claimedAt
+- `Transaction` — id, userId, type (send/claim/refund/topup), amount, relatedId, createdAt
+
+---
+
+## Frontend — Components
+
+### 1. Send Red Packet (Bottom Sheet)
+- Amount input (total amount)
+- Count input (for group: how many can claim)
+- Type toggle: Lucky Draw / Equal Split
+- Greeting message input (default: "恭喜发财，大吉大利")
+- "Send" button with wallet balance display
+- Insufficient balance → "Top Up" link
+
+### 2. Red Packet Message Bubble
+- Custom IM message type rendered as a red/gold card in chat
+- Shows: sender name, greeting text, status badge (tap to open / claimed / expired)
+- Tap → open animation → reveal amount
+
+### 3. Open Animation
+- Full-screen gold coin burst (Lottie)
+- Amount reveal with "You got ¥XX.XX" text
+- "View Details" link
+
+### 4. Red Packet Detail Screen
+- Header: total amount, sender, greeting
+- Claim list: avatar + name + amount + time (sorted by claim time)
+- "Best Luck" badge on the highest lucky-draw amount
+- Remaining/expired status
+
+### 5. Wallet Screen
+- Balance display
+- Transaction history (send/claim/refund/topup)
+- Top-up button
+
+---
+
+## Backend — API Routes
+
+### Red Packet
+`POST /api/redpacket/send`
+Request: `{ conversationId, conversationType, type, totalAmount, totalCount, greeting }`
+Pipeline:
+1. Validate: totalAmount ≥ totalCount × 0.01 (minimum 1 cent per person)
+2. Freeze totalAmount from sender's wallet (atomic: deduct balance, add frozenBalance)
+3. Create RedPacket record
+4. If type === 'lucky': pre-generate random splits using "double-mean" algorithm, store in Redis list
+5. Send custom IM message (type: 'red_packet', payload: { redPacketId, greeting, senderName })
+6. Schedule expiry job at expiresAt (24h later)
+7. Return: `{ redPacketId, messageId }`
+
+`POST /api/redpacket/claim`
+Request: `{ redPacketId }`
+Pipeline:
+1. Acquire Redis distributed lock (`lock:rp:{id}`)
+2. Check: not expired, remainingCount > 0, user hasn't already claimed
+3. Pop amount from Redis list (lucky) or calculate equal split
+4. Create Claim record
+5. Credit claimer's wallet balance
+6. Decrement remainingCount and remainingAmount
+7. If remainingCount === 0: mark status 'claimed_all', unfreeze any rounding remainder
+8. Release lock
+9. Send IM notification: "XX claimed your red packet"
+10. Return: `{ amount }`
+
+`GET /api/redpacket/:id` — detail with claim list
+
+### Expiry Refund Job
+- Runs every minute, checks for expired RedPackets with remainingAmount > 0
+- Refund remainingAmount to sender's wallet
+- Mark status 'expired'
+- Send IM notification: "Your red packet expired, ¥XX.XX refunded"
+
+### Wallet
+- `GET /api/wallet` — balance
+- `GET /api/wallet/transactions` — paginated transaction history
+- `POST /api/wallet/topup` — initiate payment (Stripe/local gateway)
+
+---
+
+## Lucky Draw Algorithm ("Double Mean")
+
+```
+function generateLuckySplits(totalAmount, totalCount):
+  splits = []
+  remaining = totalAmount
+  for i in 1..totalCount:
+    if i === totalCount:
+      splits.push(remaining)
+    else:
+      maxAmount = (remaining / (totalCount - i + 1)) * 2
+      amount = random(0.01, maxAmount)
+      amount = round(amount, 2)
+      splits.push(amount)
+      remaining -= amount
+  shuffle(splits)  // randomize order
+  return splits
+```
+
+---
+
+## Configuration
+
+`.env.example`:
+```
+DATABASE_URL=
+REDIS_URL=
+IM_SDK_APP_ID=
+IM_SECRET_KEY=
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+STRIPE_SECRET_KEY=
+FIREBASE_SERVICE_ACCOUNT_JSON=
+JWT_SECRET=
+```
+
+---
+
+## Critical Implementation Notes
+
+1. **Atomicity** — wallet deduction + red packet creation must be in a single DB transaction. Never allow negative balance.
+2. **Distributed lock** — use Redis `SET NX EX` for claim lock. TTL = 5 seconds. Prevents double-claim in high concurrency.
+3. **Pre-generated splits** — for lucky draw, pre-compute all amounts on send and store in Redis list. Claims just `LPOP`. This avoids race conditions.
+4. **Decimal precision** — use `Decimal(10,2)` in MySQL. Never use float for money.
+5. **Expiry refund** — must handle edge case where a claim is in-flight while expiry job runs. The distributed lock handles this.
+6. **Custom IM message** — register custom message type with Tencent IM. Render with custom bubble UI. Server-side callback on message send for audit trail.
+7. **Compliance** — depending on jurisdiction, money transfer features may require financial licensing. This implementation assumes a closed-loop virtual currency system.
+
+---
+
+Output complete, runnable code for every file. Include full TypeScript types, error handling, and loading states throughout. Do not truncate any file.
+</script>
+
 <footer class="site-footer">
-  © 2026 Tencent Cloud. All rights reserved.
+  &copy; 2026 Tencent Cloud. All rights reserved.
 </footer>
 
 <script src="../_shared/detail.js"></script>

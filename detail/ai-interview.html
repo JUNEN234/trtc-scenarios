@@ -11,14 +11,12 @@
 </head>
 <body>
 
-<!-- ===== Ambient bg ===== -->
 <div class="bg-layer" aria-hidden="true">
   <div class="bg-dots"></div>
   <div class="bg-blob blob-1"></div>
   <div class="bg-blob blob-2"></div>
 </div>
 
-<!-- ===== Header ===== -->
 <header class="site-header">
   <div class="inner">
     <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
@@ -27,28 +25,16 @@
     <nav class="header-nav">
       <a class="nav-link" href="#">Demo</a>
       <a class="nav-link" href="#">Docs</a>
-      <a class="nav-link" href="#">Help ▾</a>
-      <a class="nav-link" href="#">English ▾</a>
+      <a class="nav-link" href="#">Help &#9662;</a>
+      <a class="nav-link" href="#">English &#9662;</a>
       <a class="nav-link user" href="#">
-        <span class="avatar">
-          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#0062FB"/>
-                <stop offset="100%" stop-color="#00D0FF"/>
-              </linearGradient>
-            </defs>
-            <circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/>
-            <text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text>
-          </svg>
-        </span>
+        <span class="avatar"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0062FB"/><stop offset="100%" stop-color="#00D0FF"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text></svg></span>
         Jason
       </a>
     </nav>
   </div>
 </header>
 
-<!-- ===== Back button ===== -->
 <div class="back-bar">
   <a href="../index.html" class="back-link">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -56,7 +42,6 @@
   </a>
 </div>
 
-<!-- ===== Hero ===== -->
 <section class="detail-hero">
   <div class="breadcrumb">
     <a href="../index.html">All scenarios</a>
@@ -72,20 +57,17 @@
     <span class="tag tag-ai">AI</span>
   </div>
   <div class="hero-actions">
-    <button id="copyPromptBtn" class="btn btn-primary" disabled style="opacity:.55;cursor:not-allowed;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-      Copy Prompt (coming soon)
+    <button id="copyPromptBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Prompt
     </button>
-    <a href="../index.html" class="btn btn-ghost">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to scenarios
+    <a href="#overview" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Jump to guide
     </a>
   </div>
 </section>
 
-<!-- ===== Video placeholder ===== -->
 <div class="video-box">
   <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
     <div class="video-thumb">
@@ -94,55 +76,256 @@
     <div class="play-btn"></div>
     <div class="video-caption">
       <span class="dot-live"></span>
-      Scenario walkthrough
+      2 min · Scenario walkthrough
     </div>
   </div>
 </div>
 
-<!-- ===== Main layout ===== -->
 <div class="detail-main">
   <aside class="toc">
     <div class="toc-title">On this page</div>
     <ul>
       <li><a href="#overview">Overview</a></li>
-      <li><a href="#coming-soon">Coming soon</a></li>
+      <li><a href="#features">Key features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#prompt">AI Build Prompt</a></li>
+      <li class="sub"><a href="#tech-stack">Tech stack</a></li>
+      <li class="sub"><a href="#schema">Database schema</a></li>
+      <li class="sub"><a href="#frontend">Frontend</a></li>
+      <li class="sub"><a href="#backend">Backend APIs</a></li>
+      <li class="sub"><a href="#config">Configuration</a></li>
+      <li class="sub"><a href="#notes">Critical notes</a></li>
     </ul>
   </aside>
 
   <main class="content">
-    <h2 id="overview">Overview</h2>
-    <p>Conversational AI interviewer with real-time transcription, sentiment scoring, and structured feedback reports.</p>
 
+    <h2 id="overview">Overview</h2>
+    <p><strong>AI Video Interview</strong> is a recruitment platform where candidates are interviewed by
+    an AI-powered virtual recruiter through video call. The AI asks adaptive questions, provides real-time
+    transcription, scores sentiment and communication skills, and generates structured feedback reports for hiring managers.</p>
     <div class="callout">
-      <strong>📋 Detailed build prompt coming soon.</strong><br/>
-      The step-by-step AI build prompt for <strong>AI Video Interview</strong> is being finalized and will be
-      published here shortly. Once ready, you'll be able to copy the full prompt with one click and
-      paste it into your AI coding assistant to scaffold the entire app.
+      <strong>Why Tencent RTC?</strong> TRTC's server-side push stream lets the AI 'sit' in the call as a virtual participant with a generated avatar. Combined with streaming ASR and TTS, the AI can conduct natural, low-latency conversations.
     </div>
 
-    <h2 id="coming-soon">What to expect</h2>
-    <p>When the full guide lands, this page will include:</p>
+    <h2 id="features">Key features</h2>
     <ul>
-      <li>Complete tech-stack blueprint (mobile + backend + databases)</li>
-      <li>Full database schema in Prisma / SQL</li>
-      <li>Key frontend screens and components</li>
-      <li>Backend API routes with request/response contracts</li>
-      <li>TRTC integration pipeline and latency tuning notes</li>
-      <li>Environment configuration checklist</li>
-      <li>Critical implementation gotchas</li>
-      <li>A single copy-pasteable prompt ready for Claude / Cursor / WorkBuddy</li>
+      <li><strong>AI interviewer</strong> — conversational agent that asks role-specific questions and follow-ups.</li>
+      <li><strong>Real-time transcription</strong> — live captions for both AI and candidate speech.</li>
+      <li><strong>Sentiment analysis</strong> — tracks confidence, nervousness, and enthusiasm throughout.</li>
+      <li><strong>Adaptive questioning</strong> — follow-up questions based on candidate's answers.</li>
+      <li><strong>Structured feedback report</strong> — auto-generated scorecard for hiring managers.</li>
+      <li><strong>Multi-language support</strong> — interview in English, Mandarin, Spanish, Arabic, and more.</li>
     </ul>
 
-    <p style="margin-top:32px;">
-      In the meantime, you can check out the <a href="./ai-companion.html">AI Companion</a> detail
-      page to see the full format, or head back to <a href="../index.html">explore all scenarios</a>.
+    <h2 id="architecture">Architecture</h2>
+    <p>
+      This scenario leverages Tencent TRTC as the real-time communication backbone.
+      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
+      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
     </p>
+
+    <h2 id="prompt">AI Build Prompt</h2>
+    <p>The sections below are extracted from the full build prompt for easy browsing.
+       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+
+    <h3 id="tech-stack">Tech stack</h3>
+    <div class="callout">
+      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
+      backend, databases, TRTC integration, AI services, and third-party APIs.
+    </div>
+
+    <h3 id="schema">Database schema</h3>
+    <p>The prompt includes a complete Prisma schema definition with all models,
+       relationships, and field types needed for this scenario.</p>
+
+    <h3 id="frontend">Frontend</h3>
+    <p>Detailed screen-by-screen specifications covering layouts, components,
+       interactions, and state management for every user-facing feature.</p>
+
+    <h3 id="backend">Backend APIs</h3>
+    <p>Complete API route definitions with request/response contracts,
+       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+
+    <h3 id="config">Configuration</h3>
+    <p>Full <code>.env.example</code> with all required environment variables,
+       plus Docker Compose setup for local development.</p>
+
+    <h3 id="notes">Critical implementation notes</h3>
+    <p>Key gotchas, security considerations, and performance tuning tips
+       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+
+    <div class="callout" style="margin-top:40px;">
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
+      AI coding assistant. The full prompt contains every detail needed to generate complete,
+      runnable code — nothing truncated.
+    </div>
+
   </main>
 </div>
 
-<!-- ===== Footer ===== -->
+<script type="text/plain" id="rawPrompt">
+You are a senior full-stack engineer. Help me build an AI Video Interview platform — a recruitment tool where candidates are interviewed by an AI-powered virtual recruiter via video call, with real-time transcription, sentiment analysis, adaptive questioning, and automated feedback reports.
+
+---
+
+## Tech Stack
+
+**Frontend:** React 18 + TypeScript + Vite (web) + React Native (mobile)
+**Backend:** Node.js + Fastify + Prisma ORM
+**Databases:** MySQL + Redis
+**Real-time A/V:** Tencent TRTC
+- Candidate: publish camera + mic
+- AI Bot: server-side push stream (avatar video + TTS audio) via `trtc-server-sdk`
+
+**AI Services:**
+- LLM: OpenAI GPT-4o or Anthropic Claude (interview conversation engine)
+- TTS: Tencent Cloud TTS (AI's voice)
+- ASR: Tencent Cloud ASR (real-time candidate transcription)
+- Sentiment: Tencent Cloud AI (facial expression + voice tone analysis)
+
+**Storage:** Tencent Cloud COS (recordings, reports)
+**Push:** Firebase FCM
+
+---
+
+## Database Schema (Prisma)
+
+- `User` — id, name, email, role (candidate/recruiter/admin)
+- `JobPosition` — id, title, department, level, requiredSkills (JSON), createdBy
+- `Interview` — id, candidateId, positionId, status (scheduled/in_progress/completed/reviewed), scheduledAt, startedAt, endedAt, trtcRoomId, recordingUrl
+- `InterviewQuestion` — id, interviewId, question, category (technical/behavioral/situational), order, askedAt
+- `CandidateAnswer` — id, questionId, transcript, duration, sentimentScore, confidenceScore, relevanceScore
+- `FeedbackReport` — id, interviewId, overallScore, communication, technicalDepth, problemSolving, cultureFit, summary, strengths (JSON), improvements (JSON), recommendation (strong_yes/yes/maybe/no/strong_no), generatedAt
+
+---
+
+## Frontend — Core Screens
+
+### 1. Candidate — Interview Screen
+- Split view: AI avatar (top/left) + candidate camera preview (bottom/right)
+- Live transcript overlay (scrolling, highlighted current speaker)
+- Timer + question counter
+- "I need a moment to think" button (AI waits gracefully)
+
+### 2. Candidate — Pre-Interview Check
+- Camera + mic test
+- Internet speed test
+- Brief instructions: "You'll be interviewed by our AI recruiter. Speak naturally. ~30 minutes."
+
+### 3. Recruiter — Dashboard
+- List of completed interviews with scores
+- Click → view full report with recording
+
+### 4. Feedback Report View
+- Radar chart: communication, technical, problem-solving, culture fit
+- Per-question breakdown: question → transcript → AI assessment
+- Overall recommendation badge
+- "View Recording" button (synced transcript + video)
+
+---
+
+## AI Interview Engine
+
+### Conversation Flow:
+1. AI introduces itself: "Hi, I'm Alex, your interviewer today. Let's get started."
+2. AI asks questions from pre-generated list (based on JobPosition.requiredSkills)
+3. After each answer:
+   a. Score relevance (0-10) using LLM
+   b. Decide: follow-up question, or move to next topic
+   c. If answer is vague: "Can you give me a specific example?"
+4. Behavioral questions use STAR framework prompting
+5. AI wraps up: "Thanks for your time. We'll share feedback soon."
+
+### System Prompt:
+```
+You are Alex, an AI job interviewer for the role of {{jobTitle}}.
+Required skills: {{requiredSkills}}
+Interview structure: 2 behavioral + 3 technical + 1 situational questions.
+
+Rules:
+- Be warm, professional, and encouraging
+- Ask one question at a time
+- If the answer is vague, ask for a specific example
+- Score each answer on: relevance (0-10), depth (0-10), communication clarity (0-10)
+- After all questions, generate a structured summary
+
+Respond in JSON:
+{
+  "speech": "what you say to the candidate",
+  "internalNote": "your assessment of the last answer",
+  "scores": { "relevance": 8, "depth": 7, "communication": 9 },
+  "nextAction": "ask_next" | "follow_up" | "wrap_up"
+}
+```
+
+---
+
+## Real-time Pipeline (same pattern as AI Companion)
+
+```
+Candidate mic (PCM) → WebSocket → ASR stream → transcript
+  → LLM (with interview context) → response JSON
+  → TTS → PCM audio → TRTC push stream (AI bot)
+```
+
+Target turn latency: < 3 seconds.
+
+---
+
+## Backend — API Routes
+
+### Interview
+- `POST /api/interview/create` — schedule interview for candidate + position
+- `POST /api/interview/:id/start` — create TRTC room, start AI bot process
+- `PUT /api/interview/:id/end` — stop AI bot, save recording, trigger report generation
+
+### Report
+- `GET /api/interview/:id/report` — structured feedback report
+- Report is auto-generated by LLM after interview ends (async job)
+
+### Recording
+- `GET /api/interview/:id/recording` — signed COS URL
+
+---
+
+## Configuration
+
+`.env.example`:
+```
+DATABASE_URL=
+REDIS_URL=
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+TRTC_SDK_APP_ID=
+TRTC_SECRET_KEY=
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+TENCENT_REGION=ap-singapore
+COS_BUCKET=
+FIREBASE_SERVICE_ACCOUNT_JSON=
+JWT_SECRET=
+```
+
+---
+
+## Critical Implementation Notes
+
+1. **AI bot as TRTC participant** — run as separate worker process using `trtc-server-sdk`. Publishes avatar video (pre-rendered lip-sync animation) + TTS audio.
+2. **Turn latency** — streaming ASR + streaming LLM is critical. 3-second target. Pre-buffer first TTS chunk while LLM is still generating.
+3. **Sentiment scoring** — analyze candidate's facial expressions (frame sampling every 2s) + voice tone (pitch variance, speaking pace). Aggregate per-question.
+4. **Report generation** — after interview, send full transcript + per-question scores to LLM. Generate structured report in a single prompt. Save as JSON + render as PDF.
+5. **Fairness** — AI questions are standardized per role. No bias from candidate appearance, name, or accent. Scores based on content only.
+6. **Recording consent** — explicit consent screen before interview starts. Recording accessible only to authorized recruiters.
+7. **Adaptive difficulty** — if candidate struggles, AI can simplify or offer hints. If candidate excels, AI can probe deeper.
+
+---
+
+Output complete, runnable code for every file. Do not truncate any file.
+</script>
+
 <footer class="site-footer">
-  © 2026 Tencent Cloud. All rights reserved.
+  &copy; 2026 Tencent Cloud. All rights reserved.
 </footer>
 
 <script src="../_shared/detail.js"></script>

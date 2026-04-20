@@ -11,14 +11,12 @@
 </head>
 <body>
 
-<!-- ===== Ambient bg ===== -->
 <div class="bg-layer" aria-hidden="true">
   <div class="bg-dots"></div>
   <div class="bg-blob blob-1"></div>
   <div class="bg-blob blob-2"></div>
 </div>
 
-<!-- ===== Header ===== -->
 <header class="site-header">
   <div class="inner">
     <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
@@ -27,28 +25,16 @@
     <nav class="header-nav">
       <a class="nav-link" href="#">Demo</a>
       <a class="nav-link" href="#">Docs</a>
-      <a class="nav-link" href="#">Help ▾</a>
-      <a class="nav-link" href="#">English ▾</a>
+      <a class="nav-link" href="#">Help &#9662;</a>
+      <a class="nav-link" href="#">English &#9662;</a>
       <a class="nav-link user" href="#">
-        <span class="avatar">
-          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#0062FB"/>
-                <stop offset="100%" stop-color="#00D0FF"/>
-              </linearGradient>
-            </defs>
-            <circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/>
-            <text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text>
-          </svg>
-        </span>
+        <span class="avatar"><svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0062FB"/><stop offset="100%" stop-color="#00D0FF"/></linearGradient></defs><circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text></svg></span>
         Jason
       </a>
     </nav>
   </div>
 </header>
 
-<!-- ===== Back button ===== -->
 <div class="back-bar">
   <a href="../index.html" class="back-link">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -56,7 +42,6 @@
   </a>
 </div>
 
-<!-- ===== Hero ===== -->
 <section class="detail-hero">
   <div class="breadcrumb">
     <a href="../index.html">All scenarios</a>
@@ -72,77 +57,281 @@
     <span class="tag tag-chat">Chat</span>
   </div>
   <div class="hero-actions">
-    <button id="copyPromptBtn" class="btn btn-primary" disabled style="opacity:.55;cursor:not-allowed;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-      </svg>
-      Copy Prompt (coming soon)
+    <button id="copyPromptBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copy Prompt
     </button>
-    <a href="../index.html" class="btn btn-ghost">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-      Back to scenarios
+    <a href="#overview" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Jump to guide
     </a>
   </div>
 </section>
 
-<!-- ===== Video placeholder ===== -->
 <div class="video-box">
   <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
     <div class="video-thumb">
-      <img src="../assets/scenarios/fan-idol.png" alt="Fan & Idol Live" />
+      <img src="../assets/scenarios/fan-idol.png" alt="Fan &amp; Idol Live" />
     </div>
     <div class="play-btn"></div>
     <div class="video-caption">
       <span class="dot-live"></span>
-      Scenario walkthrough
+      2 min · Scenario walkthrough
     </div>
   </div>
 </div>
 
-<!-- ===== Main layout ===== -->
 <div class="detail-main">
   <aside class="toc">
     <div class="toc-title">On this page</div>
     <ul>
       <li><a href="#overview">Overview</a></li>
-      <li><a href="#coming-soon">Coming soon</a></li>
+      <li><a href="#features">Key features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#prompt">AI Build Prompt</a></li>
+      <li class="sub"><a href="#tech-stack">Tech stack</a></li>
+      <li class="sub"><a href="#schema">Database schema</a></li>
+      <li class="sub"><a href="#frontend">Frontend</a></li>
+      <li class="sub"><a href="#backend">Backend APIs</a></li>
+      <li class="sub"><a href="#config">Configuration</a></li>
+      <li class="sub"><a href="#notes">Critical notes</a></li>
     </ul>
   </aside>
 
   <main class="content">
-    <h2 id="overview">Overview</h2>
-    <p>Million-user idol livestreams with gifting, lottery, and ultra-low-latency co-hosting between stars and fans.</p>
 
+    <h2 id="overview">Overview</h2>
+    <p><strong>Fan & Idol Live</strong> is a mobile-first live-streaming platform where idols broadcast
+    to millions of fans in real time. Fans interact through gifts, chat, lottery draws, and can be invited on-stage
+    for co-hosting video calls. The platform needs sub-second latency for the live feed, a scalable gift animation
+    engine, real-time chat moderation, and a revenue system for virtual gifts.</p>
     <div class="callout">
-      <strong>📋 Detailed build prompt coming soon.</strong><br/>
-      The step-by-step AI build prompt for <strong>Fan &amp; Idol Live</strong> is being finalized and will be
-      published here shortly. Once ready, you'll be able to copy the full prompt with one click and
-      paste it into your AI coding assistant to scaffold the entire app.
+      <strong>Why Tencent RTC?</strong> Tencent TRTC's CDN relay + co-hosting architecture delivers &lt; 300ms latency for on-stage guests while serving millions of viewers through CDN with &lt; 1s latency. Built-in beauty filters and mixing keep the production quality high.
     </div>
 
-    <h2 id="coming-soon">What to expect</h2>
-    <p>When the full guide lands, this page will include:</p>
+    <h2 id="features">Key features</h2>
     <ul>
-      <li>Complete tech-stack blueprint (mobile + backend + databases)</li>
-      <li>Full database schema in Prisma / SQL</li>
-      <li>Key frontend screens and components</li>
-      <li>Backend API routes with request/response contracts</li>
-      <li>TRTC integration pipeline and latency tuning notes</li>
-      <li>Environment configuration checklist</li>
-      <li>Critical implementation gotchas</li>
-      <li>A single copy-pasteable prompt ready for Claude / Cursor / WorkBuddy</li>
+      <li><strong>Mega-scale livestream</strong> — single room supports 1M+ concurrent viewers via TRTC CDN relay.</li>
+      <li><strong>Co-hosting</strong> — fans join stage as video guests with &lt; 300ms latency, seamless mic/camera toggling.</li>
+      <li><strong>Virtual gifting engine</strong> — animated gifts (Lottie), combo multipliers, real-time revenue dashboard.</li>
+      <li><strong>Live lottery & red packets</strong> — timed draws during stream with fair randomization.</li>
+      <li><strong>Real-time chat</strong> — Tencent IM integration with spam filter, slow mode, and pinned messages.</li>
+      <li><strong>Beauty filters</strong> — TRTC built-in face beautification, stickers, and virtual backgrounds.</li>
     </ul>
 
-    <p style="margin-top:32px;">
-      In the meantime, you can check out the <a href="./ai-companion.html">AI Companion</a> detail
-      page to see the full format, or head back to <a href="../index.html">explore all scenarios</a>.
+    <h2 id="architecture">Architecture</h2>
+    <p>
+      This scenario leverages Tencent TRTC as the real-time communication backbone.
+      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
+      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
     </p>
+
+    <h2 id="prompt">AI Build Prompt</h2>
+    <p>The sections below are extracted from the full build prompt for easy browsing.
+       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+
+    <h3 id="tech-stack">Tech stack</h3>
+    <div class="callout">
+      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
+      backend, databases, TRTC integration, AI services, and third-party APIs.
+    </div>
+
+    <h3 id="schema">Database schema</h3>
+    <p>The prompt includes a complete Prisma schema definition with all models,
+       relationships, and field types needed for this scenario.</p>
+
+    <h3 id="frontend">Frontend</h3>
+    <p>Detailed screen-by-screen specifications covering layouts, components,
+       interactions, and state management for every user-facing feature.</p>
+
+    <h3 id="backend">Backend APIs</h3>
+    <p>Complete API route definitions with request/response contracts,
+       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+
+    <h3 id="config">Configuration</h3>
+    <p>Full <code>.env.example</code> with all required environment variables,
+       plus Docker Compose setup for local development.</p>
+
+    <h3 id="notes">Critical implementation notes</h3>
+    <p>Key gotchas, security considerations, and performance tuning tips
+       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+
+    <div class="callout" style="margin-top:40px;">
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
+      AI coding assistant. The full prompt contains every detail needed to generate complete,
+      runnable code — nothing truncated.
+    </div>
+
   </main>
 </div>
 
-<!-- ===== Footer ===== -->
+<script type="text/plain" id="rawPrompt">
+You are a senior full-stack mobile engineer. Help me build a Fan & Idol Live Streaming app — a product where idols broadcast live video to millions of fans, with virtual gifting, real-time chat, lottery draws, and fan co-hosting (fans can join the stream as video guests).
+
+---
+
+## Tech Stack
+
+**Mobile (choose one):**
+- React Native 0.73 + TypeScript + Expo
+- OR Flutter + Dart
+
+**Backend:** Node.js + Fastify + Prisma ORM
+
+**Databases:**
+- MySQL — relational data (users, rooms, gifts, transactions)
+- Redis — real-time counters, leaderboards, rate limiting, pub/sub for chat
+
+**Real-time A/V:** Tencent TRTC
+- Mobile: `trtc-react-native` (RN) or `trtc_sdk` (Flutter)
+- CDN relay for large audiences (TRTC → CDN push)
+- Co-hosting: up to 9 on-stage guests via TRTC low-latency rooms
+
+**Chat & Signaling:** Tencent IM SDK (`@tencentcloud/chat`)
+**Push Notifications:** Firebase FCM + APNs
+**Storage:** Tencent Cloud COS (avatars, gift assets)
+**Payments:** Stripe or local payment gateway for coin purchases
+
+---
+
+## Database Schema (Prisma)
+
+Generate `prisma/schema.prisma` with these models:
+
+- `User` — id, nickname, avatar, role (fan/idol/admin), coinBalance, totalSpent, createdAt
+- `LiveRoom` — id, hostId (→ User), title, coverUrl, status (live/ended/scheduled), viewerCount, startedAt, endedAt, trtcRoomId
+- `Gift` — id, name, iconUrl, lottieUrl, coinCost, tier (normal/premium/legendary)
+- `GiftTransaction` — id, senderId, receiverId, roomId, giftId, quantity, totalCoins, createdAt
+- `CoHostSlot` — id, roomId, userId, status (pending/active/ended), joinedAt, leftAt
+- `LotteryDraw` — id, roomId, prize, winnerId, participantCount, drawnAt
+- `ChatMessage` — id, roomId, userId, content, type (text/system/gift_notification), createdAt
+
+---
+
+## Frontend — Core Screens
+
+### 1. Live Viewer Screen
+- Full-screen video player (TRTC CDN stream or low-latency stream)
+- Floating chat overlay at bottom-left with auto-scroll
+- Gift animation layer (Lottie full-screen for legendary gifts)
+- Bottom bar: gift button (opens gift panel), chat input, share button
+- Top bar: host avatar + viewer count (animated) + close button
+- Gift combo counter animation when same gift sent repeatedly
+- Co-host request button ("Raise Hand")
+
+### 2. Broadcaster (Idol) Screen
+- Camera preview with beauty filter controls
+- Real-time viewer count + revenue counter
+- Co-host management panel: approve/reject/kick guests (up to 8 co-hosts)
+- Lottery trigger button: set prize → draw → announce winner
+- Chat moderation: ban user, slow mode toggle, pin message
+
+### 3. Gift Panel (Bottom Sheet)
+- Grid of gift items grouped by tier
+- Coin balance display + "Top Up" button
+- Send button with quantity selector (×1, ×5, ×10, ×99)
+- Preview animation before sending
+
+### 4. Co-Host Stage View
+- Grid layout for up to 9 video tiles (host + 8 guests)
+- Each tile: video + nickname + mute indicator
+- Guest controls: mute self, flip camera, leave stage
+
+### 5. Discovery / Home Screen
+- Live-now carousel + scheduled streams
+- Top earners leaderboard
+- Search by idol name
+
+---
+
+## Frontend — Key Hooks
+
+### `hooks/useTRTC.ts`
+- `joinAsViewer(roomId)` — subscribe to CDN relay stream (low cost, high scale)
+- `joinAsCoHost(roomId)` — switch to low-latency TRTC room, publish local stream
+- `startBroadcast(roomId)` — open camera + mic, start publishing as anchor
+- Network quality monitoring, auto-degrade video resolution on poor networks
+
+### `hooks/useGift.ts`
+- Send gift mutation (`POST /api/gift/send`)
+- Optimistic coin deduction
+- Gift animation queue (FIFO, legendary gifts interrupt)
+
+---
+
+## Backend — API Routes
+
+### LiveRoom
+- `POST /api/room/create` — idol creates room, get trtcRoomId + push URL
+- `GET /api/room/:id` — room details + TRTC viewer token
+- `PUT /api/room/:id/end` — end stream, save stats
+- `GET /api/room/live` — list all currently live rooms
+
+### TRTC
+- `POST /api/trtc/token` — generate userSig (viewer or co-host role)
+- `POST /api/trtc/cohost/approve` — approve a fan's raise-hand request, grant co-host token
+- `POST /api/trtc/cohost/kick` — remove co-host from stage
+
+### Gifting
+`POST /api/gift/send`
+Request: `{ roomId, giftId, quantity }`
+Pipeline:
+1. Check sender coin balance ≥ cost × quantity
+2. Deduct coins (atomic transaction)
+3. Credit receiver (idol) earnings
+4. Create GiftTransaction record
+5. Publish gift event to Redis pub/sub → broadcast to all viewers via IM
+6. If legendary gift: trigger full-screen animation event
+
+### Lottery
+- `POST /api/lottery/create` — host sets prize description
+- `POST /api/lottery/join` — fan enters draw
+- `POST /api/lottery/draw` — randomly pick winner, announce via IM system message
+
+### Chat (via Tencent IM)
+- Room-level group chat with custom message types for gift notifications
+- Server-side moderation callbacks: spam detection, banned words filter
+
+---
+
+## Configuration
+
+`.env.example`:
+```
+DATABASE_URL=
+REDIS_URL=
+TRTC_SDK_APP_ID=
+TRTC_SECRET_KEY=
+TRTC_EXPIRE_TIME=86400
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+TENCENT_REGION=ap-singapore
+IM_SDK_APP_ID=
+IM_SECRET_KEY=
+COS_BUCKET=
+STRIPE_SECRET_KEY=
+FIREBASE_SERVICE_ACCOUNT_JSON=
+JWT_SECRET=
+```
+
+---
+
+## Critical Implementation Notes
+
+1. **TRTC UserSig** — always server-side. Viewer tokens use `audience` role for CDN relay; co-host tokens use `anchor` role.
+2. **CDN relay** — enable TRTC CDN bypass publishing for the main stream. Viewers watch via CDN (scales to millions). Co-hosts use TRTC real-time rooms.
+3. **Gift atomicity** — coin deduction + transaction creation must be in a DB transaction. Use Redis distributed lock for high-concurrency burst sends.
+4. **Legendary gift queue** — use a FIFO queue with priority. Only one full-screen animation at a time; legendary gifts jump the queue.
+5. **Chat rate limiting** — max 5 messages/second/user. Slow mode: 1 message every 10 seconds for non-subscribers.
+6. **Co-host limit** — max 8 fans on stage simultaneously. Use Redis sorted set for raise-hand queue.
+
+---
+
+Output complete, runnable code for every file. Include full TypeScript types, error handling, and loading states throughout. Do not truncate any file.
+</script>
+
 <footer class="site-footer">
-  © 2026 Tencent Cloud. All rights reserved.
+  &copy; 2026 Tencent Cloud. All rights reserved.
 </footer>
 
 <script src="../_shared/detail.js"></script>

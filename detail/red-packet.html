@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>In-Chat Red Packet · Tencent RTC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/detail.css">
+</head>
+<body>
+
+<!-- ===== Ambient bg ===== -->
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-dots"></div>
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+</div>
+
+<!-- ===== Header ===== -->
+<header class="site-header">
+  <div class="inner">
+    <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
+      <img src="../assets/logo.png" alt="Tencent RTC" class="site-logo" />
+    </a>
+    <nav class="header-nav">
+      <a class="nav-link" href="#">Demo</a>
+      <a class="nav-link" href="#">Docs</a>
+      <a class="nav-link" href="#">Help ▾</a>
+      <a class="nav-link" href="#">English ▾</a>
+      <a class="nav-link user" href="#">
+        <span class="avatar">
+          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#0062FB"/>
+                <stop offset="100%" stop-color="#00D0FF"/>
+              </linearGradient>
+            </defs>
+            <circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/>
+            <text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text>
+          </svg>
+        </span>
+        Jason
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== Back button ===== -->
+<div class="back-bar">
+  <a href="../index.html" class="back-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to all scenarios
+  </a>
+</div>
+
+<!-- ===== Hero ===== -->
+<section class="detail-hero">
+  <div class="breadcrumb">
+    <a href="../index.html">All scenarios</a>
+    <span class="sep">/</span>
+    <span>Finance</span>
+    <span class="sep">/</span>
+    <span style="color:var(--ink-2);">In-Chat Red Packet</span>
+  </div>
+  <h1 class="detail-title">In-Chat Red Packet</h1>
+  <p class="detail-sub">Custom message type for lucky money transfers in 1v1 and group chats, backed by signaling and order state callbacks.</p>
+  <div class="hero-tags">
+    <span class="tag tag-chat">Chat</span>
+  </div>
+  <div class="hero-actions">
+    <button id="copyPromptBtn" class="btn btn-primary" disabled style="opacity:.55;cursor:not-allowed;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+      Copy Prompt (coming soon)
+    </button>
+    <a href="../index.html" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to scenarios
+    </a>
+  </div>
+</section>
+
+<!-- ===== Video placeholder ===== -->
+<div class="video-box">
+  <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
+    <div class="video-thumb">
+      <img src="../assets/scenarios/red-packet.png" alt="In-Chat Red Packet" />
+    </div>
+    <div class="play-btn"></div>
+    <div class="video-caption">
+      <span class="dot-live"></span>
+      Scenario walkthrough
+    </div>
+  </div>
+</div>
+
+<!-- ===== Main layout ===== -->
+<div class="detail-main">
+  <aside class="toc">
+    <div class="toc-title">On this page</div>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#coming-soon">Coming soon</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+    <h2 id="overview">Overview</h2>
+    <p>Custom message type for lucky money transfers in 1v1 and group chats, backed by signaling and order state callbacks.</p>
+
+    <div class="callout">
+      <strong>📋 Detailed build prompt coming soon.</strong><br/>
+      The step-by-step AI build prompt for <strong>In-Chat Red Packet</strong> is being finalized and will be
+      published here shortly. Once ready, you'll be able to copy the full prompt with one click and
+      paste it into your AI coding assistant to scaffold the entire app.
+    </div>
+
+    <h2 id="coming-soon">What to expect</h2>
+    <p>When the full guide lands, this page will include:</p>
+    <ul>
+      <li>Complete tech-stack blueprint (mobile + backend + databases)</li>
+      <li>Full database schema in Prisma / SQL</li>
+      <li>Key frontend screens and components</li>
+      <li>Backend API routes with request/response contracts</li>
+      <li>TRTC integration pipeline and latency tuning notes</li>
+      <li>Environment configuration checklist</li>
+      <li>Critical implementation gotchas</li>
+      <li>A single copy-pasteable prompt ready for Claude / Cursor / WorkBuddy</li>
+    </ul>
+
+    <p style="margin-top:32px;">
+      In the meantime, you can check out the <a href="./ai-companion.html">AI Companion</a> detail
+      page to see the full format, or head back to <a href="../index.html">explore all scenarios</a>.
+    </p>
+  </main>
+</div>
+
+<!-- ===== Footer ===== -->
+<footer class="site-footer">
+  © 2026 Tencent Cloud. All rights reserved.
+</footer>
+
+<script src="../_shared/detail.js"></script>
+</body>
+</html>

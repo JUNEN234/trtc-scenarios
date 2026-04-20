@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Companion · Tencent RTC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_shared/detail.css">
+</head>
+<body>
+
+<!-- ===== Ambient bg ===== -->
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-dots"></div>
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+</div>
+
+<!-- ===== Header ===== -->
+<header class="site-header">
+  <div class="inner">
+    <a href="https://trtc.io" target="_blank" rel="noopener" class="logo-block" style="text-decoration:none;">
+      <img src="../assets/logo.png" alt="Tencent RTC" class="site-logo" />
+    </a>
+    <nav class="header-nav">
+      <a class="nav-link" href="#">Demo</a>
+      <a class="nav-link" href="#">Docs</a>
+      <a class="nav-link" href="#">Help ▾</a>
+      <a class="nav-link" href="#">English ▾</a>
+      <a class="nav-link user" href="#">
+        <span class="avatar">
+          <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="avatarGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#0062FB"/>
+                <stop offset="100%" stop-color="#00D0FF"/>
+              </linearGradient>
+            </defs>
+            <circle cx="14" cy="14" r="14" fill="url(#avatarGrad)"/>
+            <text x="14" y="18" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" font-family="Inter,sans-serif">J</text>
+          </svg>
+        </span>
+        Jason
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== Back button (above hero) ===== -->
+<div class="back-bar">
+  <a href="../index.html" class="back-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    Back to all scenarios
+  </a>
+</div>
+
+<!-- ===== Hero ===== -->
+<section class="detail-hero">
+  <div class="breadcrumb">
+    <a href="../index.html">All scenarios</a>
+    <span class="sep">/</span>
+    <span>Social & Entertainment</span>
+    <span class="sep">/</span>
+    <span style="color:var(--ink-2);">AI Companion</span>
+  </div>
+  <h1 class="detail-title">AI Companion</h1>
+  <p class="detail-sub">
+    Build a personalized AI companion with real-time voice &amp; video calls, long-term memory,
+    emotional responses, and an animated avatar — powered by Tencent RTC, Tencent Cloud TTS/ASR,
+    and your favorite LLM.
+  </p>
+  <div class="hero-tags">
+    <span class="tag">Call</span>
+    <span class="tag tag-ai">AI</span>
+    <span class="tag tag-chat">Chat</span>
+  </div>
+  <div class="hero-actions">
+    <button id="copyPromptBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>
+      Copy Prompt
+    </button>
+    <a href="#overview" class="btn btn-ghost">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      Jump to guide
+    </a>
+  </div>
+</section>
+
+<!-- ===== Video placeholder ===== -->
+<div class="video-box">
+  <div class="video-player" role="button" tabindex="0" aria-label="Play scenario demo video">
+    <!-- Thumb image will be swapped in once user provides one -->
+    <div class="video-thumb">
+      <img src="../assets/scenarios/ai-companion.png" alt="AI Companion" />
+    </div>
+    <div class="play-btn"></div>
+    <div class="video-caption">
+      <span class="dot-live"></span>
+      2 min · Scenario walkthrough
+    </div>
+  </div>
+</div>
+
+<!-- ===== Main layout ===== -->
+<div class="detail-main">
+
+  <!-- ===== TOC ===== -->
+  <aside class="toc">
+    <div class="toc-title">On this page</div>
+    <ul>
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#features">Key features</a></li>
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#prompt">AI Build Prompt</a></li>
+      <li class="sub"><a href="#tech-stack">Tech stack</a></li>
+      <li class="sub"><a href="#schema">Database schema</a></li>
+      <li class="sub"><a href="#frontend">Frontend</a></li>
+      <li class="sub"><a href="#backend">Backend APIs</a></li>
+      <li class="sub"><a href="#config">Configuration</a></li>
+      <li class="sub"><a href="#notes">Critical notes</a></li>
+    </ul>
+  </aside>
+
+  <!-- ===== Content ===== -->
+  <main class="content">
+
+    <h2 id="overview">Overview</h2>
+    <p>
+      <strong>AI Companion</strong> is a mobile-first experience where users can chat, call, and bond with a
+      personalized AI character. The companion has memory of past conversations, a consistent personality,
+      a unique voice, and an animated avatar that reacts to emotion in real time.
+    </p>
+    <div class="callout">
+      <strong>Why Tencent RTC?</strong> Sub-second, cross-continent voice latency and a server-side push
+      stream SDK that lets the AI speak back as a virtual "anchor". Combined with Tencent Cloud streaming
+      ASR/TTS, you can keep end-to-end voice turn latency under 2 seconds.
+    </div>
+
+    <h2 id="features">Key features</h2>
+    <ul>
+      <li><strong>Real-time voice &amp; video calls</strong> with natural turn-taking, powered by TRTC.</li>
+      <li><strong>Persistent long-term memory</strong> using Pinecone vector DB — your companion remembers birthdays, preferences, inside jokes.</li>
+      <li><strong>Emotion-aware replies</strong> — every response carries an emotion label that drives avatar animation &amp; voice tone.</li>
+      <li><strong>Custom personality &amp; voice</strong> — users can configure tone, backstory, speaking style, and pick a Tencent Cloud TTS voice.</li>
+      <li><strong>Memory Journal</strong> — transparent, user-editable list of what the companion has remembered.</li>
+      <li><strong>Proactive push notifications</strong> — morning greetings, "miss-you" nudges, and important-date reminders.</li>
+    </ul>
+
+    <h2 id="architecture">Architecture</h2>
+    <p>The voice-call loop is the most latency-sensitive path. Here's the full pipeline:</p>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">pipeline</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="text">  Client mic (PCM 20ms)
+        ↓ WebSocket
+  Backend: Tencent ASR stream  →  partial transcript
+        ↓  (on sentence boundary)
+  LLM (streaming, with memory-augmented system prompt)
+        ↓  token stream
+  Tencent TTS stream  →  PCM chunks
+        ↓  trtc-server-sdk (AI "anchor")
+  TRTC room  →  Client playback</code></pre>
+    </div>
+    <p>
+      Mobile client joins the room as <code>audience</code>. The AI push process (run as a separate worker
+      to avoid blocking) generates the voice stream and publishes into the same room. Target end-to-end
+      latency: <strong>&lt; 2 seconds</strong>.
+    </p>
+
+    <h2 id="prompt">AI Build Prompt</h2>
+    <p>
+      This is the full prompt you can paste into Claude / Cursor / WorkBuddy to scaffold the entire app.
+      Click <strong>Copy Prompt</strong> at the top to grab the whole thing, or browse the sections below.
+    </p>
+
+    <h3 id="tech-stack">Tech stack</h3>
+    <p>Pick your mobile framework, everything else is fixed:</p>
+    <table>
+      <thead><tr><th>Layer</th><th>Choice</th></tr></thead>
+      <tbody>
+        <tr><td>Mobile</td><td>React Native 0.73 + TS + Expo <strong>or</strong> Flutter + Dart</td></tr>
+        <tr><td>Backend</td><td>Node.js + Fastify + Prisma</td></tr>
+        <tr><td>Databases</td><td>MySQL + Redis + Pinecone</td></tr>
+        <tr><td>Real-time A/V</td><td><code>trtc-react-native</code> / <code>trtc_sdk</code> (Flutter); <code>trtc-server-sdk</code> server-side</td></tr>
+        <tr><td>AI</td><td>OpenAI GPT-4o or Anthropic Claude (switchable) + OpenAI embeddings</td></tr>
+        <tr><td>Voice</td><td>Tencent Cloud TTS (emotional) + Tencent Cloud ASR (streaming)</td></tr>
+        <tr><td>Push</td><td>Firebase FCM + APNs via <code>firebase-admin</code></td></tr>
+        <tr><td>Storage</td><td>Tencent Cloud COS</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="schema">Database schema (Prisma)</h3>
+    <p>Six core models:</p>
+    <ul>
+      <li><code>User</code> — id, nickname, avatar, timezone, lastActiveAt, pushToken, pushEnabled, createdAt</li>
+      <li><code>Companion</code> — id, name, personality, speakingStyle, voiceId, avatarUrl, backgroundStory, ownerId</li>
+      <li><code>Conversation</code> — id, userId, companionId, startedAt, endedAt</li>
+      <li><code>Message</code> — id, conversationId, role, content, audioUrl, emotion, createdAt</li>
+      <li><code>Memory</code> — id, userId, companionId, pineconeKey, summary, category, createdAt</li>
+      <li><code>LiveRoom</code> — id, userId, companionId, roomId, status, startedAt, endedAt</li>
+    </ul>
+
+    <h3 id="frontend">Frontend core screens</h3>
+    <ul>
+      <li><strong>ChatScreen</strong> — FlashList message feed, long-press mic, emotion badge in header, auto-play AI audio.</li>
+      <li><strong>CallScreen</strong> — full-screen avatar with lip-sync driven by audio energy, mute/hangup controls, network indicator.</li>
+      <li><strong>Companion Profile</strong> — edit name, personality, speaking style, voice preview, avatar upload.</li>
+      <li><strong>Memory Journal</strong> — list of remembered facts; long-press to delete.</li>
+      <li><strong>Settings</strong> — push toggle, timezone, account.</li>
+    </ul>
+
+    <h3>Key hook — <code>useTRTC</code></h3>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">TypeScript</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="typescript">interface TRTCHook {
+  init(config: { sdkAppId: number; userId: string; userSig: string }): Promise&lt;void&gt;;
+  joinCall(roomId: number): Promise&lt;void&gt;;   // joins as 'audience' — receives AI stream
+  startVoiceCapture(): Promise&lt;void&gt;;          // opens mic, streams PCM to backend via WS
+  endCall(): Promise&lt;void&gt;;
+  state: 'idle' | 'connecting' | 'in-call' | 'error';
+  networkQuality: number;                     // 1 (best) – 6 (worst)
+}</code></pre>
+    </div>
+    <p>Call flow:</p>
+    <ol>
+      <li><code>POST /api/trtc/token</code> → receive <code>{ sdkAppId, userId, userSig, roomId }</code></li>
+      <li>Join room as <code>audience</code></li>
+      <li>Open local mic; send raw PCM (20 ms frames) over WebSocket to backend</li>
+      <li>Backend processes audio → AI voice stream returned via TRTC anchor bot</li>
+      <li>Subscribe to remote stream; auto-play</li>
+      <li>If <code>networkQuality ≥ 5</code>, auto-degrade to text-only mode</li>
+    </ol>
+
+    <h3 id="backend">Backend APIs</h3>
+    <p><strong>Chat pipeline</strong> — <code>POST /api/chat/message</code>:</p>
+    <ol>
+      <li>If voice input: Tencent ASR → text</li>
+      <li>Embed user message (OpenAI <code>text-embedding-3-small</code>)</li>
+      <li>Pinecone top-5 memories filtered by <code>userId + companionId</code></li>
+      <li>Build system prompt (template below) + call LLM (streaming, JSON mode)</li>
+      <li>Tencent TTS on <code>content</code> → upload MP3 to COS → <code>audioUrl</code></li>
+      <li>Save <code>Message</code> → return to client</li>
+      <li>Async: memory extraction job</li>
+    </ol>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">prompt</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="prompt">You are {{name}}. {{backgroundStory}}
+Personality: {{personality}}
+Speaking style: {{speakingStyle}}
+Current time: {{datetime}}
+
+What you know about the user:
+{{memories}}
+
+Reply in natural, conversational first-person language.
+Always respond in this exact JSON format:
+{
+  "content": "your reply here",
+  "emotion": "happy | sad | shy | calm | excited",
+  "thinkingNote": "(optional) your inner thought, not spoken aloud"
+}</code></pre>
+    </div>
+
+    <p><strong>TRTC routes</strong>:</p>
+    <ul>
+      <li><code>POST /api/trtc/token</code> — generate <code>userSig</code> using <code>tls-sig-api-v2</code> (server-side only).</li>
+      <li><code>POST /api/trtc/end</code> — mark room ended, save transcript, trigger memory update.</li>
+      <li><code>WebSocket /ws/call/:roomId</code> — pipe mic PCM → ASR → LLM → TTS → TRTC push stream.</li>
+    </ul>
+
+    <p><strong>Memory &amp; push</strong>:</p>
+    <table>
+      <thead><tr><th>Job</th><th>Schedule</th><th>Logic</th></tr></thead>
+      <tbody>
+        <tr><td>Morning greeting</td><td>Daily 07:50 (user TZ)</td><td>LLM generates personalized good-morning message using memories</td></tr>
+        <tr><td>Miss-you nudge</td><td>Hourly check</td><td>If <code>lastActiveAt</code> &gt; 8h ago &amp; push enabled</td></tr>
+        <tr><td>Important date</td><td>Daily 08:00</td><td>Match <code>Memory.category = 'important_date'</code> against tomorrow</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="config">Configuration</h3>
+    <p>Required <code>.env</code>:</p>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">env</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="env">DATABASE_URL=
+REDIS_URL=
+PINECONE_API_KEY=
+PINECONE_INDEX=
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+TRTC_SDK_APP_ID=
+TRTC_SECRET_KEY=
+TRTC_EXPIRE_TIME=86400
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+TENCENT_REGION=ap-guangzhou
+COS_BUCKET=
+FIREBASE_SERVICE_ACCOUNT_JSON=
+JWT_SECRET=</code></pre>
+    </div>
+    <p>Plus <code>docker-compose.yml</code> (mysql + redis) and a backend <code>Dockerfile</code>.</p>
+
+    <h3 id="notes">Critical implementation notes</h3>
+    <ol>
+      <li><strong>UserSig is server-side only.</strong> Never ship <code>TRTC_SECRET_KEY</code> to the client.</li>
+      <li><strong>AI push stream runs as a separate worker.</strong> Do not block the main API process.</li>
+      <li><strong>Streaming everywhere.</strong> Use streaming ASR + streaming LLM to stay under 2-second turn latency.</li>
+      <li><strong>Graceful degradation.</strong> <code>networkQuality ≥ 5</code> → auto fallback to text-only.</li>
+      <li><strong>Privacy by namespace.</strong> Pinecone vectors scoped by <code>userId</code>.</li>
+      <li><strong>Push rate limiting.</strong> Max 3 pushes/user/day.</li>
+    </ol>
+
+    <div class="callout">
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your AI coding
+      assistant. The full prompt asks for every file, full TypeScript types, error handling, and loading
+      states — nothing truncated.
+    </div>
+
+  </main>
+</div>
+
+<!-- ===== Hidden raw prompt for "Copy Prompt" button ===== -->
+<script type="text/plain" id="rawPrompt">
+You are a senior full-stack mobile engineer. Help me build an AI Companion mobile app — a product where users can have real-time voice/video calls, text chats, and emotional interactions with a personalized AI companion that has memory, personality, a unique voice, and an animated avatar.
+
+---
+
+## Tech Stack
+
+**Mobile (choose one):**
+- React Native 0.73 + TypeScript + Expo
+- OR Flutter + Dart
+
+**Backend:** Node.js + Fastify + Prisma ORM
+
+**Databases:**
+- MySQL — relational data (users, messages, companions)
+- Redis — session cache, rate limiting
+- Pinecone — vector DB for long-term memory
+
+**Real-time A/V:** Tencent TRTC
+- Mobile: `trtc-react-native` (RN) or `trtc_sdk` (Flutter)
+- Backend push stream: `trtc-server-sdk` (Node.js)
+
+**AI Services:**
+- LLM: OpenAI GPT-4o or Anthropic Claude (switchable via env var)
+- TTS: Tencent Cloud TTS (emotional voice synthesis)
+- ASR: Tencent Cloud ASR (real-time streaming)
+- Embeddings: OpenAI `text-embedding-3-small`
+
+**Push Notifications:** Firebase FCM + APNs (`firebase-admin`)
+**Storage:** Tencent Cloud COS
+**Scheduling:** `node-schedule`
+
+---
+
+## Database Schema (Prisma)
+
+Generate `prisma/schema.prisma` with these models:
+
+- `User` — id, nickname, avatar, timezone, lastActiveAt, pushToken, pushEnabled, createdAt
+- `Companion` — id, name, personality, speakingStyle, voiceId, avatarUrl, backgroundStory, ownerId (→ User)
+- `Conversation` — id, userId, companionId, startedAt, endedAt
+- `Message` — id, conversationId, role (user/assistant), content, audioUrl, emotion, createdAt
+- `Memory` — id, userId, companionId, pineconeKey, summary, category, createdAt
+- `LiveRoom` — id, userId, companionId, roomId, status, startedAt, endedAt
+
+---
+
+## Project Structure
+
+Generate full directory trees for both frontend and backend, then output all file contents below.
+
+---
+
+## Frontend — Core Screens & Components
+
+### 1. Chat Screen (`ChatScreen`)
+- Header: companion avatar + name + current emotion badge (happy / sad / shy / calm / excited)
+- Message list: use `FlashList` for performance; AI bubbles on left with avatar, user on right
+- Input bar: text field + send button + long-press mic button (voice recording via `expo-av`) + video call button
+- While AI is replying: animated "thinking" indicator (three bouncing dots)
+- On receiving a message with `audioUrl`: auto-play audio
+- Emotion badge updates dynamically from the `emotion` field in each AI response
+
+### 2. Call Screen (`CallScreen`)
+- Full-screen dark background
+- Center: AI Avatar animation — mouth moves when AI is speaking (drive via audio energy level)
+- Bottom bar: red hang-up button + mute toggle + switch to text mode
+- Top bar: call duration timer + network quality indicator (colored dot: green/yellow/red)
+- Pre-connection state: "Connecting…" animation overlay
+
+### 3. Companion Profile & Customization Screen
+- Edit companion name, personality description, speaking style, background story
+- Select voice (list of Tencent TTS voice IDs with preview)
+- Upload or choose avatar image
+
+### 4. Memory Journal Screen
+- List of all memory summaries for this companion
+- Each card shows: category tag, summary text, date
+- Long-press to delete a memory entry
+
+### 5. Settings Screen
+- Push notification toggle
+- Timezone selector
+- Account management
+
+---
+
+## Frontend — Key Hooks
+
+### `hooks/useTRTC.ts`
+
+```typescript
+interface TRTCHook {
+  init(config: { sdkAppId: number; userId: string; userSig: string }): Promise<void>;
+  joinCall(roomId: number): Promise<void>;   // joins as 'audience' — receives AI stream
+  startVoiceCapture(): Promise<void>;         // opens mic, streams PCM to backend via WebSocket
+  endCall(): Promise<void>;
+  state: 'idle' | 'connecting' | 'in-call' | 'error';
+  networkQuality: number;                     // 1 (best) – 6 (worst)
+}
+```
+
+Call flow:
+1. `POST /api/trtc/token` → receive `{ sdkAppId, userId, userSig, roomId }`
+2. Join room as `audience` role
+3. Open local mic; send raw PCM frames (20 ms each) over WebSocket to backend
+4. Backend processes audio → returns AI voice stream via TRTC
+5. Subscribe to remote stream from AI "anchor" bot; auto-play
+6. Listen for `onRemoteUserLeaveRoom` and `onError` events
+7. If `networkQuality` ≥ 5, auto-degrade to text-only mode
+
+### `hooks/useChat.ts`
+- Wraps React Query mutation for `POST /api/chat/message`
+- Manages optimistic UI updates and message list state
+- Handles audio playback queue
+
+---
+
+## Backend — API Routes
+
+### Auth
+- `POST /api/auth/register` — email + password, return JWT
+- `POST /api/auth/login` — return JWT
+- `PUT /api/user/settings` — update timezone, pushEnabled
+- `POST /api/user/push-token` — register FCM/APNs token
+
+### Chat
+`POST /api/chat/message`
+
+Request: `{ conversationId, content, type: 'text' | 'voice', audioBase64? }`
+
+Processing pipeline:
+1. If `type === 'voice'`: call Tencent ASR to transcribe `audioBase64` → text
+2. Embed the user message using OpenAI `text-embedding-3-small`
+3. Query Pinecone for top-5 relevant memories (`filter: { userId, companionId }`)
+4. Build System Prompt (see template below) injecting companion personality + memories
+5. Call LLM (streaming); require JSON response: `{ content, emotion, thinkingNote? }`
+6. Call Tencent TTS on `content` → upload MP3 to COS → get `audioUrl`
+7. Save Message to MySQL
+8. **Async** (don't await): run memory extraction job
+9. Return: `{ message: { id, role, content, emotion, audioUrl }, memoryUpdated: boolean }`
+
+**System Prompt template:**
+```
+You are {{name}}. {{backgroundStory}}
+Personality: {{personality}}
+Speaking style: {{speakingStyle}}
+Current time: {{datetime}}
+
+What you know about the user:
+{{memories}}
+
+Reply in natural, conversational first-person language.
+Always respond in this exact JSON format:
+{
+  "content": "your reply here",
+  "emotion": "happy | sad | shy | calm | excited",
+  "thinkingNote": "(optional) your inner thought, not spoken aloud"
+}
+```
+
+### TRTC
+`POST /api/trtc/token`
+- Generate `userSig` server-side using `tls-sig-api-v2` — NEVER expose `secretKey` to the client
+- Create `LiveRoom` record in DB
+- Return: `{ sdkAppId, userId, userSig, roomId }`
+
+`POST /api/trtc/end`
+- Mark `LiveRoom` as ended
+- Save full conversation transcript
+- Trigger async memory update
+
+`WebSocket /ws/call/:roomId`
+- Receive PCM audio frames from client (20 ms chunks)
+- Pipe to Tencent ASR streaming session; accumulate transcript until sentence boundary detected
+- On complete sentence → build prompt → call LLM (streaming output)
+- Stream LLM tokens to Tencent TTS → receive PCM audio back
+- Push PCM audio into the TRTC room via `trtc-server-sdk` as the AI anchor bot
+- Target end-to-end latency: < 2 seconds (use streaming ASR + streaming LLM to minimize wait)
+
+### Memory
+`GET /api/memory/:companionId` — list all memory summaries for the journal screen
+`DELETE /api/memory/:id` — delete a memory entry
+
+**Memory extraction job** (`services/memory.ts`) — runs async after each conversation:
+1. Send last 10 message turns to LLM; extract structured facts:
+   - User preferences / dislikes
+   - Important life events (birthday, breakup, promotion, etc.)
+   - Emotional state trends
+   - Special requests or nicknames for the companion
+2. For each extracted fact: generate embedding → upsert to Pinecone with metadata `{ userId, companionId, category, summary, date }`
+
+### Push Notifications (`services/push.ts`)
+Use `node-schedule` for three recurring jobs:
+
+| Job | Schedule | Logic |
+|-----|----------|-------|
+| Morning greeting | Daily 07:50 (per user timezone) | LLM generates personalized good-morning message using companion personality + recent memories; send via FCM/APNs |
+| Miss-you nudge | Hourly check | If `user.lastActiveAt` > 8 hours ago AND push enabled → send "I miss you" style message |
+| Important date reminder | Daily 08:00 | Check Memory entries with `category = 'important_date'`; if tomorrow matches → send reminder |
+
+LLM prompt for push copy:
+```
+You are {{companionName}}. Generate a push notification for: {{pushType}}.
+User context: {{recentMemorySummary}}
+Rules: title ≤ 20 words, body ≤ 50 words, warm and conversational tone.
+Return JSON: { "title": "...", "body": "..." }
+```
+
+---
+
+## Configuration Files to Generate
+
+- `.env.example` with all required keys:
+  ```
+  DATABASE_URL=
+  REDIS_URL=
+  PINECONE_API_KEY=
+  PINECONE_INDEX=
+  OPENAI_API_KEY=
+  ANTHROPIC_API_KEY=
+  TRTC_SDK_APP_ID=
+  TRTC_SECRET_KEY=
+  TRTC_EXPIRE_TIME=86400
+  TENCENT_SECRET_ID=
+  TENCENT_SECRET_KEY=
+  TENCENT_REGION=ap-guangzhou
+  COS_BUCKET=
+  FIREBASE_SERVICE_ACCOUNT_JSON=
+  JWT_SECRET=
+  ```
+
+- `docker-compose.yml` — services: `mysql`, `redis`
+- `Dockerfile` for the backend
+
+---
+
+## Critical Implementation Notes
+
+1. **TRTC UserSig** — always generated server-side. Never send `secretKey` to the client.
+2. **AI audio push stream** — run the TRTC bot push process as a separate worker/process from the main API server to avoid blocking.
+3. **Streaming pipeline** — use streaming ASR + streaming LLM responses to keep voice call latency under 2 seconds.
+4. **Network degradation** — when `networkQuality ≥ 5`, the client must automatically fall back to text-only chat mode.
+5. **Memory privacy** — all Pinecone vectors must be namespaced by `userId` to prevent cross-user data leakage.
+6. **Push rate limiting** — maximum 3 push notifications per user per day to avoid being spammy.
+
+---
+
+Output complete, runnable code for every file. Include full TypeScript types, error handling, and loading states throughout. Do not truncate any file.
+</script>
+
+<!-- ===== Footer ===== -->
+<footer class="site-footer">
+  © 2026 Tencent Cloud. All rights reserved.
+</footer>
+
+<script src="../_shared/detail.js"></script>
+</body>
+</html>

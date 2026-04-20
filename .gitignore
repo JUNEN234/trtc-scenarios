@@ -1,0 +1,5 @@
+.DS_Store
+v*.html
+_scripts/
+.workbuddy/
+node_modules/

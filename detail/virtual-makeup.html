@@ -101,65 +101,248 @@
   <main class="content">
 
     <h2 id="overview">Overview</h2>
-    <p><strong>Virtual Try-On Makeup</strong> is a mobile shopping feature that lets customers see how
-    makeup products look on their face in real time using AR. They can try lipsticks, foundations, eyeshadows,
-    and blush through the camera, compare before/after, and purchase directly. Beauty consultants can join
-    video calls to provide personalized advice.</p>
+    <p><strong>Virtual Try-On Makeup</strong> is a mobile-first AR beauty experience where shoppers can see
+      makeup products on their face in real time, get AI-powered shade recommendations tailored to their skin
+      tone, share their look with friends via live video, and purchase in one tap. It combines on-device face
+      mesh tracking, Lab-color-space makeup blending, and Tencent TRTC custom video source injection.</p>
     <div class="callout">
-      <strong>Why Tencent RTC?</strong> TRTC's real-time video pipeline supports custom video processing plugins, allowing AR face mesh overlays to be applied before encoding. Combined with Tencent's AI face detection SDK, you get 128-point face landmarks at 30fps.
+      <strong>Why Tencent RTC?</strong> TRTC's custom video source API lets you inject the AR-composited
+      frame (face + makeup overlay) directly into the outgoing stream instead of the raw camera feed —
+      so the friend on the other end of the live call sees your makeup look, not your bare face.
     </div>
 
     <h2 id="features">Key features</h2>
     <ul>
-      <li><strong>Real-time AR try-on</strong> — lipstick, foundation, eyeshadow, blush applied on live camera feed at 30fps.</li>
-      <li><strong>128-point face mesh</strong> — precise landmark detection for natural-looking makeup placement.</li>
-      <li><strong>Before/After toggle</strong> — swipe or tap to compare with and without makeup.</li>
-      <li><strong>Product catalog integration</strong> — tap a shade to instantly apply; buy button leads to checkout.</li>
-      <li><strong>1-on-1 beauty consultation</strong> — video call with consultant who can see your AR try-on in real time.</li>
-      <li><strong>Photo capture & share</strong> — save try-on looks and share to social media.</li>
+      <li><strong>Real-time AR makeup rendering</strong> — 468-point MediaPipe face mesh drives lip, eye, foundation, blush, contour, highlight, and brow layers at 30+ fps.</li>
+      <li><strong>AI shade recommendation</strong> — skin tone + undertone analysis via Google Cloud Vision, personalized looks from GPT-4o.</li>
+      <li><strong>Live video sharing</strong> — broadcast your AR try-on session to a friend via Tencent TRTC; they see the makeup overlay in real time.</li>
+      <li><strong>Occasion-based looks</strong> — tell the AI "date night" or "job interview" and it picks a complete coordinated look from the catalog.</li>
+      <li><strong>Save &amp; re-apply</strong> — screenshot looks, re-apply later, share, or buy all products in one tap.</li>
+      <li><strong>One-tap checkout</strong> — Stripe-powered purchase directly from the try-on screen.</li>
     </ul>
 
     <h2 id="architecture">Architecture</h2>
-    <p>
-      This scenario leverages Tencent TRTC as the real-time communication backbone.
-      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
-      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
-    </p>
+    <p>The AR + TRTC pipeline is the most latency-sensitive path. Here's the flow for a live-shared session:</p>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">pipeline</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="text">  Camera frame (30fps)
+        ↓
+  MediaPipe 468-pt face mesh
+        ↓
+  Skia / CustomPainter canvas — render makeup layers in Lab space
+        ↓
+  Composite frame (camera + makeup overlay)
+        ↓  extract pixel buffer (RGBA)
+  TRTC sendCustomVideoData()  →  remote friend sees the look</code></pre>
+    </div>
+    <p>Target: <strong>≥ 30 fps</strong> on mid-range devices. Degrade to 20/15 fps on older hardware
+       or when <code>networkQuality ≥ 5</code>.</p>
 
     <h2 id="prompt">AI Build Prompt</h2>
-    <p>The sections below are extracted from the full build prompt for easy browsing.
-       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+    <p>
+      Below is a browseable tour of the full prompt. Hit <strong>Copy Prompt</strong> at the top to grab
+      the complete, paste-ready version — including the AR frame-injection code snippets for both
+      React Native and Flutter that make this scenario genuinely buildable.
+    </p>
 
     <h3 id="tech-stack">Tech stack</h3>
-    <div class="callout">
-      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
-      backend, databases, TRTC integration, AI services, and third-party APIs.
+    <table>
+      <thead><tr><th>Layer</th><th>Choice</th></tr></thead>
+      <tbody>
+        <tr><td>Mobile</td><td>React Native 0.73 + TS + Expo <strong>or</strong> Flutter + Dart</td></tr>
+        <tr><td>Backend</td><td>Node.js + Fastify + Prisma</td></tr>
+        <tr><td>Databases</td><td>MySQL + Redis + Tencent COS</td></tr>
+        <tr><td>Face tracking</td><td><code>react-native-mediapipe</code> / <code>google_mlkit_face_detection</code> (468-point mesh)</td></tr>
+        <tr><td>Makeup rendering</td><td>RN Skia (<code>@shopify/react-native-skia</code>) / Flutter CustomPainter + <code>dart:ui</code></td></tr>
+        <tr><td>Real-time A/V</td><td><code>trtc-react-native</code> / <code>trtc_sdk</code>; server: <code>trtc-server-sdk</code></td></tr>
+        <tr><td>Skin tone AI</td><td>Google Cloud Vision (IMAGE_PROPERTIES) or AWS Rekognition</td></tr>
+        <tr><td>Shade recommendation</td><td>OpenAI GPT-4o with structured product-catalog context</td></tr>
+        <tr><td>Payments</td><td>Stripe SDK (mobile + backend webhook)</td></tr>
+        <tr><td>Push</td><td>Firebase FCM + APNs via <code>firebase-admin</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="schema">Database schema (Prisma)</h3>
+    <p>Seven core models:</p>
+    <ul>
+      <li><code>User</code> — id, email, nickname, avatar, skinTone (hex), undertone (warm/cool/neutral), pushToken, createdAt</li>
+      <li><code>Product</code> — id, brand, name, category, shadeHex, shadeName, price, thumbnailUrl, swatchAssetUrl</li>
+      <li><code>SavedLook</code> — id, userId, name, screenshotUrl, productIds (JSON), createdAt</li>
+      <li><code>TryOnSession</code> — id, userId, startedAt, endedAt, productsTried (JSON), sharedViaLive</li>
+      <li><code>LiveRoom</code> — id, hostUserId, guestUserIds (JSON), roomId, status, startedAt, endedAt</li>
+      <li><code>Order</code> — id, userId, productId, quantity, totalCents, stripePaymentIntentId, status</li>
+      <li><code>SkinAnalysis</code> — id, userId, dominantTone, undertone, recommendedShades (JSON), analyzedAt</li>
+    </ul>
+
+    <h3 id="frontend">Frontend core screens</h3>
+    <ul>
+      <li><strong>AR Camera Screen</strong> — the heart of the app: camera preview + face mesh + layered makeup rendering + product tray. Top controls: flip camera, capture, live share, AI recommend.</li>
+      <li><strong>Product Catalog</strong> — 2-column grid with category tabs, brand chips, price slider, debounced search; tap <em>Try On</em> to jump into AR with product pre-applied.</li>
+      <li><strong>Live Share Screen</strong> — TRTC-powered: host streams AR-composited video to a guest. Guest can tap shades to suggest products via TRTC IM signalling.</li>
+      <li><strong>Saved Looks</strong> — masonry grid of screenshots; re-apply, share, or Buy All in one tap.</li>
+      <li><strong>Profile</strong> — avatar + skin tone swatch + stats + re-run skin analysis + order history.</li>
+    </ul>
+
+    <h3>Makeup layer alpha blending</h3>
+    <p>Each layer uses a carefully tuned alpha so the look stays natural, not sticker-like:</p>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">config</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="json">{
+  "lip":        0.75,
+  "eyeShadow":  0.60,
+  "foundation": 0.25,
+  "blush":      0.45,
+  "contour":    0.35,
+  "highlight":  0.50
+}</code></pre>
     </div>
 
-    <h3 id="schema">Database schema</h3>
-    <p>The prompt includes a complete Prisma schema definition with all models,
-       relationships, and field types needed for this scenario.</p>
+    <h3>Key hook — <code>useTRTC</code></h3>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">TypeScript</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="typescript">interface TRTCHook {
+  initClient(config: { sdkAppId: number; userId: string; userSig: string }): Promise&lt;void&gt;;
+  startHosting(roomId: number): Promise&lt;void&gt;;
+  joinAsGuest(roomId: number): Promise&lt;void&gt;;
+  pushARFrame(pixelBuffer: Uint8Array, width: number, height: number): void;
+  endSession(): Promise&lt;void&gt;;
+  state: 'idle' | 'connecting' | 'live' | 'error';
+  networkQuality: number; // 1 best – 6 worst
+  remoteUsers: string[];
+}</code></pre>
+    </div>
 
-    <h3 id="frontend">Frontend</h3>
-    <p>Detailed screen-by-screen specifications covering layouts, components,
-       interactions, and state management for every user-facing feature.</p>
+    <h3>AR frame injection into TRTC (the critical piece)</h3>
+    <p>The most technically demanding part: TRTC must transmit the AR-composited frame, not the raw camera.
+       Enable custom capture first, then push Skia/CustomPainter output via <code>sendCustomVideoData</code>.</p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">React Native</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="typescript">// Enable custom capture before entering the room
+TRTCCloud.sharedInstance().enableCustomVideoCapture(
+  TRTCVideoStreamType.big, true
+);
+
+// After each Skia render, export and push:
+const snapshot = await skiaRef.current?.makeImageSnapshot();
+const pixelData = snapshot?.encodeToBytes(); // RGBA Uint8Array
+
+TRTCCloud.sharedInstance().sendCustomVideoData({
+  data: pixelData,
+  width: frameWidth,
+  height: frameHeight,
+  timestamp: Date.now(),
+  pixelFormat: TRTCVideoPixelFormat.RGBA32,
+  bufferType: TRTCVideoBufferType.byteArray,
+});</code></pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">Flutter</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="typescript">trtcCloud.enableCustomVideoCapture(TRTCVideoStreamType.big, true);
+
+final recorder = ui.PictureRecorder();
+final canvas = Canvas(recorder);
+arPainter.paint(canvas, size);
+final picture = recorder.endRecording();
+final image = await picture.toImage(width, height);
+final byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+
+trtcCloud.sendCustomVideoData(TRTCVideoFrame(
+  pixelFormat: TRTCVideoPixelFormat.rgba,
+  bufferType: TRTCVideoBufferType.byteBuffer,
+  data: byteData!.buffer.asUint8List(),
+  width: width,
+  height: height,
+  timestamp: DateTime.now().millisecondsSinceEpoch,
+));</code></pre>
+    </div>
 
     <h3 id="backend">Backend APIs</h3>
-    <p>Complete API route definitions with request/response contracts,
-       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+    <p><strong>Skin tone analysis</strong> — <code>POST /api/skin/analyze</code>:</p>
+    <ol>
+      <li>Accept cropped cheek-region JPEG (base64)</li>
+      <li>Google Cloud Vision IMAGE_PROPERTIES → dominant colors</li>
+      <li>Determine undertone from hue bias (warm / cool / neutral)</li>
+      <li>Nearest-shade match in Lab color space against product DB</li>
+      <li>GPT-4o picks 3 foundation + 2 lip + 2 blush shades given tone + undertone + catalog</li>
+      <li>Save <code>SkinAnalysis</code>, update <code>User.skinTone</code> &mdash; <strong>do not persist the image</strong></li>
+    </ol>
+
+    <p><strong>AI look recommendation</strong> — <code>POST /api/ai/recommend</code>:
+       streaming SSE response with GPT-4o picking a complete look given occasion + skin tone + undertone.</p>
+
+    <p><strong>TRTC routes</strong>:</p>
+    <ul>
+      <li><code>POST /api/trtc/room</code> — server-side <code>userSig</code> via <code>tls-sig-api-v2</code>, create LiveRoom with numeric roomId</li>
+      <li><code>GET /api/trtc/room/:roomId/join</code> — validate + issue guest <code>userSig</code></li>
+      <li><code>POST /api/trtc/room/:roomId/end</code> — call TRTC REST <code>DismissRoom</code>, save TryOnSession</li>
+    </ul>
+
+    <p><strong>Other routes</strong>: products (filterable), saved looks (CRUD + COS upload), Stripe checkout + webhook.</p>
 
     <h3 id="config">Configuration</h3>
-    <p>Full <code>.env.example</code> with all required environment variables,
-       plus Docker Compose setup for local development.</p>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">env</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="env">DATABASE_URL=
+REDIS_URL=
+
+TRTC_SDK_APP_ID=
+TRTC_SECRET_KEY=
+TRTC_EXPIRE_TIME=86400
+
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+TENCENT_REGION=ap-guangzhou
+COS_BUCKET=
+COS_REGION=
+
+GOOGLE_CLOUD_API_KEY=
+OPENAI_API_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+
+FIREBASE_SERVICE_ACCOUNT_JSON=
+JWT_SECRET=</code></pre>
+    </div>
+    <p>Plus <code>docker-compose.yml</code> (mysql + redis) and a backend <code>Dockerfile</code>.</p>
 
     <h3 id="notes">Critical implementation notes</h3>
-    <p>Key gotchas, security considerations, and performance tuning tips
-       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+    <ol>
+      <li><strong>UserSig is server-side only</strong> &mdash; never ship <code>TRTC_SECRET_KEY</code> to the client.</li>
+      <li><strong>Frame-injection rate</strong> &mdash; target 30 fps; drop to 20 fps on older devices; always off the UI thread.</li>
+      <li><strong>TRTC roomId must be a positive int32</strong> &mdash; no UUIDs. Use <code>Math.floor(Date.now() / 1000) % 1000000</code>.</li>
+      <li><strong>Blend in Lab color space</strong>, not RGB &mdash; the difference between realistic makeup and a flat color sticker.</li>
+      <li><strong>Fallback mesh</strong> &mdash; if detected fps &lt; 20, drop to 68-point mesh and render lip + blush only.</li>
+      <li><strong>Memory discipline</strong> &mdash; release Skia snapshots + pixel buffers immediately after pushing to TRTC; holding multiple frames OOMs 2 GB devices.</li>
+      <li><strong>Skin-tone privacy</strong> &mdash; process cheek-crop image in memory, never persist; store only hex + undertone.</li>
+      <li><strong>Network degradation</strong> &mdash; quality ≥ 5 → 15 fps; quality = 6 → audio-only.</li>
+      <li><strong>Room cleanup</strong> &mdash; always call TRTC <code>DismissRoom</code> on session end; leaked rooms bill.</li>
+      <li><strong>Deep-link invites</strong> &mdash; <code>yourapp://live/:roomId</code>; if app not installed, redirect to App Store / Play Store and store roomId in Redis for post-install join.</li>
+    </ol>
 
     <div class="callout" style="margin-top:40px;">
-      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
-      AI coding assistant. The full prompt contains every detail needed to generate complete,
-      runnable code — nothing truncated.
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your AI coding
+      assistant. The full prompt is paste-ready &mdash; complete types, error handling, loading states,
+      nothing truncated.
     </div>
 
   </main>

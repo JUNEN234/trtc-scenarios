@@ -166,7 +166,7 @@
 </div>
 
 <script type="text/plain" id="rawPrompt">
-You are a senior full-stack mobile engineer. Help me build a Virtual Try-On Makeup app — a mobile e-commerce feature where shoppers can see makeup products on their face in real time using AR, get personalized beauty consultations via video call, and purchase products directly.
+You are a senior full-stack mobile engineer. Build me a complete Virtual Makeup Try-On mobile app with real-time AR makeup rendering, an AI-powered shade recommendation engine, and live video sharing using Tencent TRTC — so users can try on makeup through their camera, share their look with friends in a live call, and purchase products in one tap.
 
 ---
 
@@ -179,137 +179,330 @@ You are a senior full-stack mobile engineer. Help me build a Virtual Try-On Make
 **Backend:** Node.js + Fastify + Prisma ORM
 
 **Databases:**
-- MySQL — products, users, orders, consultations
-- Redis — session cache, product popularity ranking
+- MySQL — users, products, saved looks, orders
+- Redis — session cache, product catalog cache
+- Tencent COS — 3D swatch assets, look screenshots, user-uploaded photos
+
+**AR / Face tracking (on-device):**
+- React Native: `react-native-mediapipe` or `vision-camera-face-detector` (MediaPipe 468-point face mesh, 60 fps)
+- Flutter: `google_mlkit_face_detection` + custom OpenGL renderer
+
+**Makeup rendering:**
+- Render AR makeup directly onto the camera preview using the face mesh landmarks
+- Support layers: lip color, eye shadow, eyeliner, mascara, foundation, blush, contour, highlighter, eyebrow fill
+- Each layer uses alpha-blended color overlays mapped to the face mesh region polygons
+- Blend modes: multiply (foundation/contour), screen (highlight), normal (lip/eye)
+
+**AI / Cloud:**
+- Skin tone analysis: Google Cloud Vision API or AWS Rekognition (detect dominant skin tone from selfie)
+- Shade recommendation: OpenAI GPT-4o with a structured product catalog context
+- Background removal (optional): `rembg` Python microservice or Tencent Cloud CI
 
 **Real-time A/V:** Tencent TRTC
-- 1-on-1 video calls with beauty consultants
-- Custom video processing plugin for AR overlay before encoding
+- Mobile SDK: `trtc-react-native` (RN) or `trtc_sdk` (Flutter)
+- Custom video source: inject AR-composited camera frames into TRTC instead of raw camera feed
+- Backend room management: `trtc-server-sdk` (Node.js)
 
-**AR / Face Detection:**
-- Tencent AI Face SDK (128-point face landmarks)
-- Custom shader/canvas rendering for makeup overlay
-
-**Storage:** Tencent Cloud COS (product images, user photos)
-**Payments:** Stripe / local payment gateway
-**Push:** Firebase FCM + APNs
+**Push Notifications:** Firebase FCM + APNs (`firebase-admin`)
+**Payments:** Stripe SDK (mobile + backend)
 
 ---
 
 ## Database Schema (Prisma)
 
-- `User` — id, name, avatar, skinTone, createdAt
-- `Product` — id, name, brand, category (lipstick/foundation/eyeshadow/blush), shades (JSON array of {name, hexColor, textureUrl}), price, imageUrl, inStock
-- `TryOnSession` — id, userId, productId, shadeIndex, photoUrl, createdAt
-- `Consultation` — id, userId, consultantId, roomId, status, startedAt, endedAt, notes
-- `Order` — id, userId, items (JSON), totalPrice, status, createdAt
-- `Consultant` — id, userId, name, avatar, speciality, rating, available
+Generate `prisma/schema.prisma` with these models:
+
+- `User` — id, email, nickname, avatar, skinTone (hex), undertone (warm/cool/neutral), pushToken, createdAt
+- `Product` — id, brand, name, category (lip/eye/foundation/blush/contour/highlight/brow), shadeHex, shadeName, price, thumbnailUrl, swatchAssetUrl, createdAt
+- `SavedLook` — id, userId, name, screenshotUrl, productIds (JSON array), createdAt
+- `TryOnSession` — id, userId, startedAt, endedAt, productsTried (JSON), sharedViaLive (bool)
+- `LiveRoom` — id, hostUserId, guestUserIds (JSON), roomId (TRTC), status (active/ended), startedAt, endedAt
+- `Order` — id, userId, productId, quantity, totalCents, stripePaymentIntentId, status, createdAt
+- `SkinAnalysis` — id, userId, dominantTone, undertone, recommendedShades (JSON), analyzedAt
+
+---
+
+## Project Structure
+
+Generate full directory trees for both frontend and backend, then output all file contents.
 
 ---
 
 ## Frontend — Core Screens
 
-### 1. AR Try-On Camera Screen
-- Full-screen camera with real-time face detection
-- Bottom product carousel: scroll through shades
-- Tap shade → instant AR overlay on face (lipstick on lips, eyeshadow on eyelids, etc.)
-- Before/After toggle button (split-screen or tap-to-compare)
-- "Capture" button to save photo
-- "Add to Cart" floating button
-- "Call Consultant" button for live video advice
+### 1. AR Camera Screen (`ARCameraScreen`) — the main screen
 
-### 2. Product Catalog
-- Categories: Lipstick, Foundation, Eyeshadow, Blush
-- Each product card: product image, name, brand, price, shade count
-- "Try It" button → opens camera with product pre-selected
+This is the heart of the app. It must run at ≥30 fps on a mid-range device.
 
-### 3. Consultation Call Screen
-- 1-on-1 video call with beauty consultant
-- Consultant can see shopper's AR try-on in real time (shared video stream)
-- Chat overlay for product links
-- Consultant can remotely switch the shopper's shade (signaling via IM)
+**Camera layer:**
+- Full-screen camera preview (front-facing by default)
+- Use `react-native-vision-camera` (RN) or `camera_awesome` (Flutter) for raw frame access
+- Apply face mesh detection on each frame using MediaPipe
 
-### 4. My Looks Gallery
-- Grid of saved try-on photos
-- Each photo: product used, shade, date
-- Share to Instagram / WhatsApp
+**AR makeup rendering:**
+- For each active makeup product, map its color onto the corresponding face mesh region:
+  - Lips → landmarks 0, 267, 269, 270, 409, 291, 375, 321, 405, 314, 17, 84, 181, 91, 146
+  - Upper eyelid → landmarks 33, 160, 158, 133, 153, 144 (left), mirrored for right
+  - Foundation → full face polygon minus eyes/brows/lips (use convex hull of outer face landmarks)
+  - Blush → cheek landmarks (50, 205 area left; 280, 425 area right)
+  - Contour → jawline + forehead edge landmarks
+  - Highlight → nose bridge + brow bone landmarks
+- Render overlays using Canvas API (RN Skia `@shopify/react-native-skia`) or Flutter's CustomPainter with `dart:ui`
+- Alpha per layer: lip 0.75, eye shadow 0.6, foundation 0.25, blush 0.45, contour 0.35, highlight 0.5
 
-### 5. Cart & Checkout
-- Standard e-commerce cart with product images
-- Shipping address, payment
+**Bottom product tray:**
+- Horizontally scrollable tray of active category tabs (Lips / Eyes / Face / Brows)
+- Under each tab: shade swatches as circles (diameter 36 px) showing `shadeHex` color
+- Tap a swatch → instantly apply that shade to the AR layer; long-press → show product detail sheet
+- "None" swatch (white with X) at the start of each row to clear that category
+
+**Top controls:**
+- Flip camera button (front ↔ rear)
+- Capture button → screenshot the AR-composited frame → save to `SavedLook` and COS
+- Live share button → starts TRTC room (see TRTC section)
+- AI Recommend button → calls `/api/ai/recommend` with current skin tone → auto-applies suggested look
+
+**Skin tone detection flow (first launch only):**
+1. Ask user to hold still for 3 seconds
+2. Capture a frame, crop to cheek region (landmark 205/425 bounding box)
+3. POST to `/api/skin/analyze` → receive `{ dominantTone, undertone, recommendedShades }`
+4. Store in `SkinAnalysis` table + update `User.skinTone`
 
 ---
 
-## AR Pipeline
+### 2. Product Catalog Screen (`CatalogScreen`)
 
-### Face Mesh Rendering (client-side):
-1. Capture camera frame (30fps)
-2. Run Tencent AI Face SDK → 128 face landmarks
-3. Map product texture to face regions:
-   - Lipstick → upper/lower lip contour (landmarks 52-63)
-   - Foundation → full face mesh with skin-tone blending
-   - Eyeshadow → eyelid area (landmarks 33-41)
-   - Blush → cheek area (landmarks 28-32)
-4. Render overlay using GPU shader (OpenGL ES / Metal)
-5. Blend with original frame (adjustable opacity for natural look)
-6. Output to TRTC video track (for consultation sharing)
+- Filter bar: category tabs + brand filter chips + price range slider
+- Grid of product cards (2-column): swatch circle + product name + brand + price + "Try On" button
+- Tap "Try On" → navigates to ARCameraScreen with that product pre-applied
+- Search bar with debounce (300 ms) → calls `GET /api/products?q=&category=&brand=`
+
+---
+
+### 3. Live Share Screen (`LiveScreen`) — TRTC integration
+
+This screen lets a host broadcast their AR try-on session to a friend (guest) in real time. **The key technical requirement is that TRTC must transmit the AR-composited video frame, not the raw camera feed.**
+
+**Host flow:**
+1. Tap "Start Live" → call `POST /api/trtc/room` → receive `{ sdkAppId, userId, userSig, roomId }`
+2. Initialize TRTC client with those credentials
+3. **Custom video source injection** — instead of letting TRTC capture from camera directly:
+   - After each AR-composited frame is rendered on the canvas/Skia surface, extract it as a pixel buffer
+   - Feed the pixel buffer into TRTC via `setLocalVideoCustomProcess` (RN) or `enableCustomVideoCapture` (Flutter)
+   - This ensures the guest sees the makeup overlay, not the raw camera
+4. Start publishing: `trtcCloud.startPublishing(streamId, TRTCVideoStreamType.big)`
+5. Share the `roomId` link with a friend (deep link or copy)
+6. UI: full-screen AR preview + guest video in a 120×160 px pip in the corner + live comment bar at bottom
+
+**Guest flow:**
+1. Open shared link → deep link opens app → call `GET /api/trtc/room/:roomId/join` → receive credentials
+2. Join room as `audience` role
+3. Subscribe to host remote stream → display full-screen
+4. Guest sees host's AR makeup look in real time
+5. Guest can tap shade swatches to suggest products → sends a signalling message to host via TRTC IM
+
+**TRTC hooks — `hooks/useTRTC.ts`:**
+```typescript
+interface TRTCHook {
+  initClient(config: { sdkAppId: number; userId: string; userSig: string }): Promise<void>;
+  startHosting(roomId: number): Promise<void>;
+  joinAsGuest(roomId: number): Promise<void>;
+  pushARFrame(pixelBuffer: Uint8Array, width: number, height: number): void;
+  endSession(): Promise<void>;
+  state: 'idle' | 'connecting' | 'live' | 'error';
+  networkQuality: number; // 1 best – 6 worst
+  remoteUsers: string[];
+}
+```
+
+**Network degradation:** if `networkQuality ≥ 5`, reduce AR frame injection rate from 30 fps to 15 fps and notify the host with a banner.
+
+---
+
+### 4. Saved Looks Screen (`SavedLooksScreen`)
+
+- Masonry grid of screenshot thumbnails
+- Tap a look card → expand modal showing: full screenshot + list of products used + "Re-apply" button + "Share" button + "Buy All" button
+- "Re-apply" → navigates to ARCameraScreen and reloads all products from that look
+- "Buy All" → adds all products in the look to cart
+
+---
+
+### 5. Profile Screen (`ProfileScreen`)
+
+- Avatar + nickname + skin tone swatch (colored circle showing `skinTone` hex)
+- Stats row: Looks saved / Products tried / Live sessions
+- Re-run skin analysis button
+- Notification preferences toggle
+- Order history list
 
 ---
 
 ## Backend — API Routes
 
+### Auth
+- `POST /api/auth/register` — email + password → JWT
+- `POST /api/auth/login` → JWT
+- `GET /api/auth/me` → current user profile + skin analysis
+
 ### Products
-- `GET /api/products?category=` — list products with shades
-- `GET /api/products/:id` — product detail with all shade textures
+- `GET /api/products` — query params: `q`, `category`, `brand`, `minPrice`, `maxPrice`, `page`, `limit`
+- `GET /api/products/:id` — single product with swatch asset URL
 
-### Try-On
-- `POST /api/tryon/save` — save try-on photo to COS, create TryOnSession record
-- `GET /api/tryon/history` — user's saved looks
+### Skin Analysis
+`POST /api/skin/analyze`
+- Accepts: `{ imageBase64: string }` (cropped cheek region JPEG)
+- Processing:
+  1. Send to Google Cloud Vision API's `IMAGE_PROPERTIES` feature → extract dominant colors
+  2. Determine undertone: if dominant hue is warm (red/yellow bias) → "warm", cool (pink/blue) → "cool"
+  3. Match dominant hex to nearest shades in product DB (Euclidean distance in Lab color space)
+  4. Call GPT-4o with structured prompt: given skin tone hex + undertone, suggest 3 foundation shades, 2 lip shades, 2 blush shades from the product catalog (pass product list as JSON)
+  5. Save `SkinAnalysis` record, update `User.skinTone`
+- Returns: `{ dominantTone, undertone, recommendedShades: Product[] }`
 
-### Consultation
-- `POST /api/consultation/request` — match with available consultant, create TRTC room
-- `POST /api/trtc/token` — generate userSig for consultation call
-- `PUT /api/consultation/:id/end` — end call, save notes
+### AI Look Recommendation
+`POST /api/ai/recommend`
+- Body: `{ occasion: string, skinTone: string, undertone: string, preferences?: string }`
+- GPT-4o prompt: given the occasion, skin tone, and undertone, pick one complete look from the product catalog. Return JSON: `{ look: { lip: ProductId, eyeShadow: ProductId, foundation: ProductId, blush: ProductId, highlight: ProductId }, rationale: string }`
+- Response is streamed back (SSE) so the app can show the rationale as it generates
+
+### TRTC
+`POST /api/trtc/room`
+- Generate `userSig` server-side using `tls-sig-api-v2` — never expose `secretKey` to the client
+- Create `LiveRoom` record with a new numeric `roomId` (use `Date.now() % 1000000` to stay within TRTC's int32 range)
+- Return: `{ sdkAppId, userId, userSig, roomId }`
+
+`GET /api/trtc/room/:roomId/join`
+- Validate room exists and is active
+- Generate `userSig` for the joining user
+- Return: `{ sdkAppId, userId, userSig, roomId }`
+
+`POST /api/trtc/room/:roomId/end`
+- Call TRTC REST API `DismissRoom` (`POST https://trtc.tencentcloudapi.com` action `DismissRoom`)
+- Update `LiveRoom.status = 'ended'`, set `endedAt`
+- Save `TryOnSession` record
+
+### Saved Looks
+- `POST /api/looks` — save a look: `{ name, screenshotBase64, productIds }` → upload screenshot to COS → save `SavedLook`
+- `GET /api/looks` — list current user's saved looks
+- `DELETE /api/looks/:id`
 
 ### Orders
-- `POST /api/order/create` — create order from cart
-- `GET /api/order/:id` — order status
+- `POST /api/orders/checkout` — create Stripe PaymentIntent for a list of product IDs → return `clientSecret`
+- `POST /api/orders/webhook` — Stripe webhook → update `Order.status` on payment success
 
 ---
 
-## Configuration
+## AR Frame Injection into TRTC — Critical Implementation Detail
+
+This is the most technically complex part of the app. The AR-composited frame must be routed into TRTC instead of the raw camera frame.
+
+**React Native (Skia + Vision Camera + TRTC):**
+```typescript
+// After each Skia canvas render, export the frame:
+const snapshot = await skiaRef.current?.makeImageSnapshot();
+const pixelData = snapshot?.encodeToBytes(); // Uint8Array of RGBA pixels
+
+// Push into TRTC custom video source:
+TRTCCloud.sharedInstance().sendCustomVideoData({
+  data: pixelData,
+  width: frameWidth,
+  height: frameHeight,
+  timestamp: Date.now(),
+  pixelFormat: TRTCVideoPixelFormat.RGBA32,
+  bufferType: TRTCVideoBufferType.byteArray,
+});
+```
+
+**Flutter (CustomPainter + TRTC SDK):**
+```dart
+// After painting the AR overlay, convert to bytes:
+final recorder = ui.PictureRecorder();
+final canvas = Canvas(recorder);
+arPainter.paint(canvas, size);
+final picture = recorder.endRecording();
+final image = await picture.toImage(width, height);
+final byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+
+// Push into TRTC:
+trtcCloud.sendCustomVideoData(TRTCVideoFrame(
+  pixelFormat: TRTCVideoPixelFormat.rgba,
+  bufferType: TRTCVideoBufferType.byteBuffer,
+  data: byteData!.buffer.asUint8List(),
+  width: width,
+  height: height,
+  timestamp: DateTime.now().millisecondsSinceEpoch,
+));
+```
+
+Enable custom capture before entering the room:
+```typescript
+// RN
+TRTCCloud.sharedInstance().enableCustomVideoCapture(TRTCVideoStreamType.big, true);
+// Flutter
+trtcCloud.enableCustomVideoCapture(TRTCVideoStreamType.big, true);
+```
+
+---
+
+## Configuration Files to Generate
 
 `.env.example`:
 ```
 DATABASE_URL=
 REDIS_URL=
+
 TRTC_SDK_APP_ID=
 TRTC_SECRET_KEY=
+TRTC_EXPIRE_TIME=86400
+
 TENCENT_SECRET_ID=
 TENCENT_SECRET_KEY=
-TENCENT_REGION=ap-singapore
+TENCENT_REGION=ap-guangzhou
 COS_BUCKET=
+COS_REGION=
+
+GOOGLE_CLOUD_API_KEY=
+OPENAI_API_KEY=
 STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+
 FIREBASE_SERVICE_ACCOUNT_JSON=
 JWT_SECRET=
-TENCENT_AI_FACE_APP_ID=
-TENCENT_AI_FACE_APP_KEY=
 ```
+
+Also generate:
+- `docker-compose.yml` — services: `mysql`, `redis`
+- `Dockerfile` for the backend API
 
 ---
 
 ## Critical Implementation Notes
 
-1. **AR performance** — face detection + rendering must run on GPU at 30fps. Use Metal (iOS) / Vulkan (Android) shaders. Never do makeup rendering on CPU.
-2. **Skin tone adaptation** — foundation blending must account for user's skin tone. Use a calibration step or auto-detect from face region pixels.
-3. **Consultation video** — the AR-overlaid video (with makeup) is what gets sent to the consultant via TRTC, not the raw camera feed. Apply AR before TRTC encoding.
-4. **Texture assets** — each shade needs a pre-authored texture map (PNG with alpha). Store on COS, cache locally.
-5. **Low-light handling** — face detection degrades in low light. Show a "Better lighting needed" prompt when confidence drops below threshold.
-6. **Privacy** — try-on photos are stored per-user and never shared without explicit consent. Camera frames are processed on-device only.
+1. **TRTC UserSig** — always generated server-side with `tls-sig-api-v2`. Never send `secretKey` to the client under any circumstances.
+
+2. **AR frame injection rate** — target 30 fps. On older devices, detect frame drop and reduce to 20 fps. Always inject frames on a background thread / isolate; never block the UI thread.
+
+3. **TRTC roomId must be a positive integer ≤ 2,147,483,647** — do not use UUID strings. Generate with `Math.floor(Date.now() / 1000) % 1000000` to stay safely within range.
+
+4. **Color space for makeup rendering** — work in Lab color space for blending and shade matching (more perceptually uniform than RGB). Convert product `shadeHex` → Lab at render time; blend overlays in Lab; convert back to RGB for display.
+
+5. **MediaPipe face mesh on low-end devices** — if detected fps < 20, fall back from 468-point mesh to 68-point mesh (faster) and only render lip and blush layers.
+
+6. **Memory management** — release Skia image snapshots and pixel buffers immediately after pushing to TRTC. Holding multiple frame buffers in memory will cause OOM crashes on 2 GB RAM devices.
+
+7. **Skin tone privacy** — the cheek-crop image sent to `/api/skin/analyze` must NOT be stored server-side. Process in memory and discard. Only store the computed `dominantTone` hex and `undertone` string.
+
+8. **Network degradation in live share** — when `networkQuality ≥ 5`, reduce AR injection to 15 fps and show a "Poor connection" banner. At quality 6, pause video and send audio-only.
+
+9. **TRTC room cleanup** — always call `DismissRoom` via REST API when the host ends a session. Rooms left open incur billing charges.
+
+10. **Deep link for live share invitation** — use `yourapp://live/:roomId` universal link format. When a guest opens the link and the app is not installed, redirect to App Store / Play Store with the `roomId` stored in a short-lived Redis key so they can join after install.
 
 ---
 
-Output complete, runnable code for every file. Include full TypeScript types, error handling, and loading states throughout. Do not truncate any file.
+Output complete, runnable code for every file. Include full TypeScript (or Dart) types, error handling, and loading states throughout. Do not truncate any file.
+
 </script>
 
 <footer class="site-footer">

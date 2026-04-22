@@ -101,72 +101,245 @@
   <main class="content">
 
     <h2 id="overview">Overview</h2>
-    <p><strong>Fan & Idol Live</strong> is a mobile-first live-streaming platform where idols broadcast
-    to millions of fans in real time. Fans interact through gifts, chat, lottery draws, and can be invited on-stage
-    for co-hosting video calls. The platform needs sub-second latency for the live feed, a scalable gift animation
-    engine, real-time chat moderation, and a revenue system for virtual gifts.</p>
+    <p><strong>Fan × Virtual Idol 1v1 Call</strong> is a mobile app where fans book real-time private video
+      calls with AI-powered virtual idols. Each idol has a distinct personality (driven by an LLM persona
+      engine), a cloned voice (ElevenLabs or Tencent Cloud TTS), and an animated Live2D / 3D avatar. Fans
+      can also watch live broadcasts, send animated gifts, join fan clubs, and purchase coins.</p>
     <div class="callout">
-      <strong>Why Tencent RTC?</strong> Tencent TRTC's CDN relay + co-hosting architecture delivers &lt; 300ms latency for on-stage guests while serving millions of viewers through CDN with &lt; 1s latency. Built-in beauty filters and mixing keep the production quality high.
+      <strong>Why Tencent RTC?</strong> The idol runs as a <strong>server-side TRTC participant</strong> —
+      the backend joins the room as a bot and pushes synthesized TTS audio directly into the stream via
+      <code>trtc-server-sdk</code>. Combined with streaming ASR + streaming LLM + streaming TTS, you keep
+      end-to-end turn latency under 2.5 seconds while the fan's device stays light (just renders the avatar).
     </div>
 
     <h2 id="features">Key features</h2>
     <ul>
-      <li><strong>Mega-scale livestream</strong> — single room supports 1M+ concurrent viewers via TRTC CDN relay.</li>
-      <li><strong>Co-hosting</strong> — fans join stage as video guests with &lt; 300ms latency, seamless mic/camera toggling.</li>
-      <li><strong>Virtual gifting engine</strong> — animated gifts (Lottie), combo multipliers, real-time revenue dashboard.</li>
-      <li><strong>Live lottery & red packets</strong> — timed draws during stream with fair randomization.</li>
-      <li><strong>Real-time chat</strong> — Tencent IM integration with spam filter, slow mode, and pinned messages.</li>
-      <li><strong>Beauty filters</strong> — TRTC built-in face beautification, stickers, and virtual backgrounds.</li>
+      <li><strong>1v1 private video calls with AI idols</strong> — LLM persona + cloned voice + Live2D/3D avatar, end-to-end latency ≤ 2.5s.</li>
+      <li><strong>Live2D / 3D avatar expressions &amp; lip-sync</strong> — driven by <code>emotion</code> tag + TTS audio RMS via TRTC IM data channel.</li>
+      <li><strong>Persistent memory</strong> — Pinecone vector store, namespaced per fan × idol, idol remembers past conversations.</li>
+      <li><strong>Real-time coin burn &amp; queue</strong> — per-minute deduction; Redis sorted-set queue when idol is busy.</li>
+      <li><strong>Virtual gifting during call</strong> — tier-based gifts inject in-character AI reactions via LLM pipeline.</li>
+      <li><strong>Live broadcasts</strong> — idols stream to mass audiences with comment + gift + fan club tiers.</li>
+      <li><strong>Content safety</strong> — every LLM output passes Tencent Content Safety before TTS.</li>
     </ul>
 
     <h2 id="architecture">Architecture</h2>
-    <p>
-      This scenario leverages Tencent TRTC as the real-time communication backbone.
-      Click <strong>Copy Prompt</strong> at the top to grab the complete AI build prompt,
-      then paste it into Claude / Cursor / WorkBuddy to scaffold the entire app.
-    </p>
+    <p>The AI call pipeline is the heart of the product. Here's the end-to-end flow during a voice turn:</p>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">pipeline</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="text">Fan mic (PCM 20ms)
+    ↓ WebSocket
+Tencent ASR stream  →  partial transcript
+    ↓  (silence &gt; 800ms OR sentence end)
+Embed → Pinecone top-5 memories
+    ↓
+LLM (streaming, JSON: content / emotion / thinkingNote)
+    ↓
+  ├─ emotion + lip-sync RMS  →  TRTC IM data channel  →  fan client avatar
+  └─ content text  →  ElevenLabs/Tencent TTS  →  PCM stream
+                                                      ↓  trtc-server-sdk
+                                                TRTC room audio
+                                                      ↓
+                                             Fan hears idol's voice</code></pre>
+    </div>
+    <p>Target end-to-end latency: <strong>≤ 2.5 seconds</strong>. The idol bot runs as a <strong>separate
+       worker process</strong> (BullMQ or Redis pub/sub), not in the API server.</p>
 
     <h2 id="prompt">AI Build Prompt</h2>
-    <p>The sections below are extracted from the full build prompt for easy browsing.
-       Use the <strong>Copy Prompt</strong> button to get the complete, unabridged version.</p>
+    <p>Below is a browseable tour of the full prompt. Hit <strong>Copy Prompt</strong> at the top to grab
+       the complete, paste-ready version — including TRTC custom audio injection snippets, avatar
+       expression blend-shape mapping, and the full idol System Prompt template.</p>
 
     <h3 id="tech-stack">Tech stack</h3>
-    <div class="callout">
-      See the full tech stack breakdown in the copied prompt — it covers mobile framework,
-      backend, databases, TRTC integration, AI services, and third-party APIs.
+    <table>
+      <thead><tr><th>Layer</th><th>Choice</th></tr></thead>
+      <tbody>
+        <tr><td>Mobile</td><td>React Native 0.73 + TS + Expo <strong>or</strong> Flutter + Dart</td></tr>
+        <tr><td>Backend</td><td>Node.js + Fastify + Prisma</td></tr>
+        <tr><td>Databases</td><td>MySQL + Redis + Pinecone (vector memory)</td></tr>
+        <tr><td>Real-time A/V</td><td><code>trtc-react-native</code>/<code>trtc_sdk</code>; server-side idol bot via <code>trtc-server-sdk</code></td></tr>
+        <tr><td>LLM</td><td>OpenAI GPT-4o or Anthropic Claude (switchable via env var)</td></tr>
+        <tr><td>Voice TTS</td><td>ElevenLabs (voice clone) or Tencent Cloud TTS</td></tr>
+        <tr><td>ASR</td><td>Tencent Cloud ASR streaming</td></tr>
+        <tr><td>Avatar</td><td><code>react-native-live2d</code> / <code>flutter_live2d</code>; lip-sync from PCM RMS; blend shapes from emotion tag</td></tr>
+        <tr><td>Payments</td><td>Stripe (Android/web) + Apple IAP (iOS) for coin packs</td></tr>
+        <tr><td>Storage</td><td>Tencent Cloud COS</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="schema">Database schema (Prisma)</h3>
+    <p>Eleven core models:</p>
+    <ul>
+      <li><code>User</code> — coinBalance, totalGiftsSent, pushToken, timezone</li>
+      <li><code>Idol</code> — personality, speakingStyle, backgroundStory, voiceId, live2dAssetUrl, callPricePerMin, isLive</li>
+      <li><code>CallSession</code> — fanUserId, idolId, trtcRoomId, durationSeconds, coinsCharged, recordingUrl</li>
+      <li><code>CallQueue</code> — queuePosition, estimatedWaitSeconds</li>
+      <li><code>Message</code> — callSessionId, role (fan/idol), content, emotion, audioUrl</li>
+      <li><code>Memory</code> — fanUserId, idolId, pineconeKey, summary, category</li>
+      <li><code>LiveRoom</code>, <code>Gift</code>, <code>CoinTransaction</code>, <code>FanClub</code>, <code>IdolPost</code></li>
+    </ul>
+
+    <h3 id="frontend">Frontend core screens</h3>
+    <ul>
+      <li><strong>HomeScreen</strong> — idol discovery: live-now carousel, "Available now" row, category filter, search.</li>
+      <li><strong>IdolProfileScreen</strong> — bio, stats, gift leaderboard, "Call Now" / "Join Queue" CTA.</li>
+      <li><strong>PreCallScreen</strong> — queue position, coin balance check, conversation starters.</li>
+      <li><strong>CallScreen</strong> (primary) — full-screen Live2D/3D avatar, fan PiP, coin burn indicator, gift sheet.</li>
+      <li><strong>LiveScreen</strong> — mass audience broadcast with comment scroll + gift overlay.</li>
+      <li><strong>WalletScreen</strong> — coin packs (Stripe + Apple IAP), transaction history.</li>
+      <li><strong>ProfileScreen</strong> — fan club memberships, call history, replay (opt-in recordings).</li>
+    </ul>
+
+    <h3>Idol System Prompt template</h3>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">prompt</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="prompt">You are {{idolName}}, a virtual idol from {{agencyName}}.
+Background: {{backgroundStory}}
+Personality: {{personality}}
+Speaking style: {{speakingStyle}}
+Current time: {{datetime}}
+
+What you remember about this fan:
+{{memories}}
+
+You are on a private video call with a fan. Be warm, playful, and in character at all times.
+Never break character. Never acknowledge being an AI unless asked directly, and even then stay in persona.
+Keep replies short (1-3 sentences) — this is a live conversation, not a monologue.
+
+Always respond in this exact JSON format:
+{
+  "content": "your spoken reply",
+  "emotion": "happy | shy | excited | sad | surprised | neutral",
+  "thinkingNote": "(optional) your inner thought, never spoken"
+}</code></pre>
     </div>
 
-    <h3 id="schema">Database schema</h3>
-    <p>The prompt includes a complete Prisma schema definition with all models,
-       relationships, and field types needed for this scenario.</p>
+    <h3>TRTC custom audio injection (server-side idol bot)</h3>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">Node.js</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="typescript">import TRTCCloud from 'trtc-server-sdk';
 
-    <h3 id="frontend">Frontend</h3>
-    <p>Detailed screen-by-screen specifications covering layouts, components,
-       interactions, and state management for every user-facing feature.</p>
+const trtc = new TRTCCloud({ sdkAppId, secretKey });
+
+// Bot joins the room as anchor
+await trtc.enterRoom({
+  roomId,
+  userId: `idol_bot_${idolId}`,
+  role: 'anchor',
+});
+
+// After TTS generates PCM audio buffer:
+trtc.sendCustomAudioData({
+  data: pcmBuffer,      // 16-bit PCM, 16kHz, mono
+  sampleRate: 16000,
+  channel: 1,
+  timestamp: Date.now(),
+});</code></pre>
+    </div>
+
+    <h3>Avatar expression mapping</h3>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">config</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="json">{
+  "happy":     { "mouthSmile": 0.8, "eyeSquint": 0.3, "cheekPuff": 0.2 },
+  "shy":       { "blushLeft": 0.6, "blushRight": 0.6, "headTilt": -8, "eyeLookDown": 0.4 },
+  "excited":   { "browRaiseL": 0.7, "browRaiseR": 0.7, "mouthOpen": 0.4, "eyeWide": 0.5 },
+  "sad":       { "browInnerUp": 0.8, "mouthFrown": 0.6, "eyeSquint": 0.4 },
+  "surprised": { "mouthOpen": 0.8, "eyeWide": 0.9, "browRaiseL": 0.9, "browRaiseR": 0.9 },
+  "neutral":   { }
+}</code></pre>
+    </div>
 
     <h3 id="backend">Backend APIs</h3>
-    <p>Complete API route definitions with request/response contracts,
-       processing pipelines, and integration points with TRTC, IM, and AI services.</p>
+    <p><strong>Call lifecycle</strong>:</p>
+    <ul>
+      <li><code>POST /api/calls/start</code> — coin balance check; provision TRTC room or queue entry; return credentials + queue position</li>
+      <li><code>POST /api/calls/:sessionId/end</code> — final coin deduction, DismissRoom via TRTC REST, trigger memory extraction</li>
+      <li><code>GET /api/calls/history</code> — paginated history</li>
+      <li><code>WebSocket /ws/call/:sessionId/audio</code> — the full streaming pipeline: ASR → LLM → TTS → TRTC</li>
+    </ul>
+
+    <p><strong>Other routes</strong>:</p>
+    <ul>
+      <li>Idols: catalog, profile, availability (queue length)</li>
+      <li>Gifts: deduct coins, inject gift event into WebSocket pipeline → idol AI reacts in character</li>
+      <li>Coins: Stripe PaymentIntent + webhook, Apple/Google IAP verify</li>
+      <li>Memory: <code>GET /api/memory/:idolId</code>, async extraction job post-call</li>
+      <li>Queue: Redis sorted set <code>ZADD queue:{idolId}</code>; <code>ZPOPMIN</code> + FCM push on slot free</li>
+    </ul>
 
     <h3 id="config">Configuration</h3>
-    <p>Full <code>.env.example</code> with all required environment variables,
-       plus Docker Compose setup for local development.</p>
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-block-lang">env</span>
+        <button class="copy-inline">Copy</button>
+      </div>
+<pre><code data-lang="env">DATABASE_URL=
+REDIS_URL=
+
+TRTC_SDK_APP_ID=
+TRTC_SECRET_KEY=
+TRTC_EXPIRE_TIME=86400
+
+TENCENT_SECRET_ID=
+TENCENT_SECRET_KEY=
+TENCENT_REGION=ap-guangzhou
+COS_BUCKET=
+COS_REGION=
+
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+ELEVENLABS_API_KEY=
+PINECONE_API_KEY=
+PINECONE_INDEX=
+
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+FIREBASE_SERVICE_ACCOUNT_JSON=
+JWT_SECRET=
+PORT=3000</code></pre>
+    </div>
+    <p>Plus <code>docker-compose.yml</code> (mysql + redis) and a backend <code>Dockerfile</code>.</p>
 
     <h3 id="notes">Critical implementation notes</h3>
-    <p>Key gotchas, security considerations, and performance tuning tips
-       specific to this scenario — the hard-won lessons that save you days of debugging.</p>
+    <ol>
+      <li><strong>UserSig is server-side only</strong> &mdash; never ship <code>TRTC_SECRET_KEY</code> to the client. Generate with <code>tls-sig-api-v2</code>.</li>
+      <li><strong>TRTC roomId must be a positive int32</strong> &mdash; use <code>Math.floor(Date.now() / 1000) % 2000000000</code>.</li>
+      <li><strong>Idol bot is server-side</strong> &mdash; fan's device never calls LLM or TTS directly. Backend joins the room as <code>idol_bot_{idolId}</code> with anchor role.</li>
+      <li><strong>Run the pipeline in a worker process</strong> &mdash; use BullMQ or Redis pub/sub. Don't block the API server with LLM/TTS calls.</li>
+      <li><strong>Lip-sync = RMS per 20ms</strong> &mdash; send as <code>audioEnergy: number[]</code> via TRTC IM data alongside the audio push. Client animates mouth with 50ms lookahead buffer.</li>
+      <li><strong>Coin deduction every 60s</strong> via <code>setInterval</code> in the WebSocket handler. On balance = 0, send <code>call_end_warning</code>, 30s grace, then <code>POST /api/calls/:sessionId/end</code>.</li>
+      <li><strong>Queue = Redis sorted set</strong>. <code>ZADD queue:{idolId}</code> on start; <code>ZPOPMIN</code> + FCM push when a slot frees.</li>
+      <li><strong>Memory privacy</strong> &mdash; never persist raw call audio (unless opt-in). Pinecone vectors namespaced <code>{fanUserId}_{idolId}</code>.</li>
+      <li><strong>Network degradation</strong> &mdash; quality ≥ 5 → lower TTS bitrate; quality = 6 → pause pipeline, play pre-recorded idle phrases, overlay "Unstable connection".</li>
+      <li><strong>Gift reactions inject into the LLM pipeline</strong> &mdash; publish via Redis pub/sub as a special system message <code>[GIFT EVENT: fan sent {type}. React warmly in character.]</code>, bypassing ASR.</li>
+      <li><strong>Content safety</strong> &mdash; every LLM output through Tencent Cloud Content Safety before TTS. On flag, substitute a safe fallback phrase matching the current emotion.</li>
+      <li><strong>Room cleanup</strong> &mdash; always call TRTC REST <code>DismissRoom</code> on call end; leaked rooms bill.</li>
+    </ol>
 
     <div class="callout" style="margin-top:40px;">
-      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your
-      AI coding assistant. The full prompt contains every detail needed to generate complete,
-      runnable code — nothing truncated.
+      <strong>Ready to build?</strong> Hit <em>Copy Prompt</em> at the top and paste into your AI coding
+      assistant. The full prompt is paste-ready &mdash; complete types, error handling, loading states,
+      nothing truncated.
     </div>
 
   </main>
 </div>
 
 <script type="text/plain" id="rawPrompt">
-You are a senior full-stack mobile engineer. Help me build a Fan & Idol Live Streaming app — a product where idols broadcast live video to millions of fans, with virtual gifting, real-time chat, lottery draws, and fan co-hosting (fans can join the stream as video guests).
+You are a senior full-stack mobile engineer. Build me a complete Fan × Virtual Idol 1v1 Call App — a mobile product where fans can book and enter real-time private video calls with AI-powered virtual idols. The idol is driven by an LLM persona engine, speaks through a cloned TTS voice, and is rendered as an animated Live2D / 3D avatar. All audio and video runs through Tencent TRTC. Fans can also watch idol live broadcasts, send gifts, join fan clubs, and purchase coins.
 
 ---
 
@@ -179,18 +352,31 @@ You are a senior full-stack mobile engineer. Help me build a Fan & Idol Live Str
 **Backend:** Node.js + Fastify + Prisma ORM
 
 **Databases:**
-- MySQL — relational data (users, rooms, gifts, transactions)
-- Redis — real-time counters, leaderboards, rate limiting, pub/sub for chat
+- MySQL — users, idols, call sessions, orders, gifts
+- Redis — call queue, session cache, coin balance hot cache
+- Pinecone — vector store for idol long-term memory per fan
 
 **Real-time A/V:** Tencent TRTC
-- Mobile: `trtc-react-native` (RN) or `trtc_sdk` (Flutter)
-- CDN relay for large audiences (TRTC → CDN push)
-- Co-hosting: up to 9 on-stage guests via TRTC low-latency rooms
+- Mobile SDK: `trtc-react-native` (RN) or `trtc_sdk` (Flutter)
+- Custom video source: inject avatar-rendered frames into TRTC instead of raw camera
+- Custom audio source: inject TTS-generated PCM audio into TRTC instead of microphone
+- Backend bot stream: `trtc-server-sdk` (Node.js) — idol runs as a server-side TRTC participant
 
-**Chat & Signaling:** Tencent IM SDK (`@tencentcloud/chat`)
+**AI / Voice:**
+- LLM: OpenAI GPT-4o or Anthropic Claude (switchable via env var) — idol persona & memory
+- TTS voice: ElevenLabs (voice clone) or Tencent Cloud TTS — produces idol's unique voice
+- ASR: Tencent Cloud ASR streaming — transcribes fan speech in real time
+- Embeddings: OpenAI `text-embedding-3-small` — for Pinecone memory retrieval
+
+**Avatar Rendering:**
+- React Native: `react-native-live2d` or WebGL via `expo-gl` + custom Three.js renderer
+- Flutter: `flutter_live2d` or Flame engine for 2D spine animation
+- Lip sync: drive mouth shape keys from TTS audio energy levels (RMS per 20 ms frame)
+- Expressions: map LLM-returned `emotion` tag to facial blend shapes (happy / shy / excited / sad / surprised)
+
+**Payments:** Stripe (web/Android) + Apple IAP (iOS) — for coin packs
 **Push Notifications:** Firebase FCM + APNs
-**Storage:** Tencent Cloud COS (avatars, gift assets)
-**Payments:** Stripe or local payment gateway for coin purchases
+**Storage:** Tencent COS — idol assets, call recordings (opt-in), gift animations
 
 ---
 
@@ -198,103 +384,394 @@ You are a senior full-stack mobile engineer. Help me build a Fan & Idol Live Str
 
 Generate `prisma/schema.prisma` with these models:
 
-- `User` — id, nickname, avatar, role (fan/idol/admin), coinBalance, totalSpent, createdAt
-- `LiveRoom` — id, hostId (→ User), title, coverUrl, status (live/ended/scheduled), viewerCount, startedAt, endedAt, trtcRoomId
-- `Gift` — id, name, iconUrl, lottieUrl, coinCost, tier (normal/premium/legendary)
-- `GiftTransaction` — id, senderId, receiverId, roomId, giftId, quantity, totalCoins, createdAt
-- `CoHostSlot` — id, roomId, userId, status (pending/active/ended), joinedAt, leftAt
-- `LotteryDraw` — id, roomId, prize, winnerId, participantCount, drawnAt
-- `ChatMessage` — id, roomId, userId, content, type (text/system/gift_notification), createdAt
+- `User` — id, email, nickname, avatar, coinBalance, totalGiftsSent, createdAt, pushToken, timezone
+- `Idol` — id, name, agencyName, description, personality, speakingStyle, backgroundStory, voiceId, live2dAssetUrl, avatarImgUrl, categoryTags (JSON), callPricePerMin (coins), isLive, createdAt
+- `CallSession` — id, fanUserId, idolId, trtcRoomId, status (queued/active/ended/cancelled), startedAt, endedAt, durationSeconds, coinsCharged, recordingUrl (nullable)
+- `CallQueue` — id, fanUserId, idolId, queuePosition, estimatedWaitSeconds, createdAt
+- `Message` — id, callSessionId, role (fan/idol), content, emotion, audioUrl, createdAt
+- `Memory` — id, fanUserId, idolId, pineconeKey, summary, category, createdAt
+- `LiveRoom` — id, idolId, trtcRoomId, viewerCount, status (active/ended), startedAt, endedAt
+- `Gift` — id, senderUserId, recipientIdolId, giftType, coinCost, animationUrl, sentAt, context (callSession/liveRoom)
+- `CoinTransaction` — id, userId, type (purchase/spend/refund), amount, balanceBefore, balanceAfter, referenceId, createdAt
+- `FanClub` — id, idolId, memberUserId, tier (standard/premium/vip), joinedAt
+- `IdolPost` — id, idolId, content, mediaUrl, likesCount, createdAt
+
+---
+
+## Project Structure
+
+Generate complete directory trees for frontend and backend, then output all file contents.
 
 ---
 
 ## Frontend — Core Screens
 
-### 1. Live Viewer Screen
-- Full-screen video player (TRTC CDN stream or low-latency stream)
-- Floating chat overlay at bottom-left with auto-scroll
-- Gift animation layer (Lottie full-screen for legendary gifts)
-- Bottom bar: gift button (opens gift panel), chat input, share button
-- Top bar: host avatar + viewer count (animated) + close button
-- Gift combo counter animation when same gift sent repeatedly
-- Co-host request button ("Raise Hand")
+### 1. Home / Idol Discovery Screen (`HomeScreen`)
 
-### 2. Broadcaster (Idol) Screen
-- Camera preview with beauty filter controls
-- Real-time viewer count + revenue counter
-- Co-host management panel: approve/reject/kick guests (up to 8 co-hosts)
-- Lottery trigger button: set prize → draw → announce winner
-- Chat moderation: ban user, slow mode toggle, pin message
+- Hero banner carousel: featured idols + live-now indicators (red dot pulse animation)
+- Section: "Available now" — horizontal scroll of idol cards showing online status
+- Section: "Your idols" — idols the fan has called before
+- Section: "New idols" — recently added
+- Idol card component: avatar image, name, agency, category tags, call price per minute (coins), "Call Now" or "Queue" CTA button
+- Filter bar: category chips (J-Pop / V-Tuber / K-Pop / Game / Anime / Original), price range slider
+- Search bar with 300 ms debounce → `GET /api/idols?q=&category=`
 
-### 3. Gift Panel (Bottom Sheet)
-- Grid of gift items grouped by tier
-- Coin balance display + "Top Up" button
-- Send button with quantity selector (×1, ×5, ×10, ×99)
-- Preview animation before sending
+---
 
-### 4. Co-Host Stage View
-- Grid layout for up to 9 video tiles (host + 8 guests)
-- Each tile: video + nickname + mute indicator
-- Guest controls: mute self, flip camera, leave stage
+### 2. Idol Profile Screen (`IdolProfileScreen`)
 
-### 5. Discovery / Home Screen
-- Live-now carousel + scheduled streams
-- Top earners leaderboard
-- Search by idol name
+- Full-bleed header: idol artwork + animated particle effect
+- Name, agency, bio, category tags
+- Personality summary (generated from idol's `personality` field)
+- Stats: total fans called, avg call rating, total gifts received
+- "Call Now" button (green, if idol slot available) or "Join Queue" button (amber, with estimated wait time)
+- Call price badge: "X coins / min"
+- Fan posts / message board (read-only from `IdolPost` table)
+- Gift history: top gifts sent to this idol (leaderboard)
+- Fan club join button with tier options
+
+---
+
+### 3. Pre-Call Screen (`PreCallScreen`)
+
+- Shown while waiting in queue or while call is being set up
+- Idol avatar centered, gently animated idle loop
+- Queue position badge: "Position #3 — ~8 min wait"
+- Coin balance check: if balance < 60 coins (covers ~5 min at base price), show "Top up coins" banner
+- Cancel queue button
+- Tips panel: "What to say to [idol name]" — 3 conversation starter suggestions from the idol's personality
+
+---
+
+### 4. 1v1 Call Screen (`CallScreen`) — PRIMARY FEATURE
+
+This is the heart of the product. The fan sees the idol as a full-screen animated avatar speaking with the idol's voice. The idol is not a human — it is fully AI-driven.
+
+**Visual layout:**
+- Full-screen idol avatar (Live2D / 3D render, 60 fps)
+- Fan's own camera preview: small PiP in bottom-right corner (120×160 px), rounded corners
+- Top bar: idol name + call timer + coin burn rate indicator ("−2 coins/min")
+- Bottom bar: mute button, end call button (red), gift button, camera flip button
+
+**Idol AI pipeline during the call (backend-driven):**
+1. Fan speaks → device mic captures audio
+2. Audio frames streamed to backend via WebSocket (`/ws/call/:sessionId/audio`)
+3. Backend pipes frames to Tencent ASR streaming → accumulates transcript until sentence boundary (silence > 800 ms or punctuation)
+4. Complete utterance → retrieve top-5 fan-idol memories from Pinecone → build idol System Prompt (see template below) → call LLM streaming
+5. LLM returns: `{ "content": "...", "emotion": "happy|shy|excited|sad|surprised|neutral", "thinkingNote": "..." }`
+6. `content` text → Tencent TTS (or ElevenLabs) → PCM audio stream
+7. Backend pushes PCM audio into the TRTC room via `trtc-server-sdk` custom audio source — the idol's voice plays on the fan's device through TRTC
+8. Backend also sends `emotion` tag + lip-sync energy data via TRTC IM data channel to the mobile client
+9. Mobile client drives the avatar: set expression blend shape from `emotion`, drive lip-sync from audio energy
+10. After call ends: async job extracts memories, updates Pinecone
+
+**Target end-to-end latency: ≤ 2.5 seconds** (use streaming ASR + streaming LLM + streaming TTS to minimize wait)
+
+**Idol System Prompt template:**
+```
+You are {{idolName}}, a virtual idol from {{agencyName}}.
+Background: {{backgroundStory}}
+Personality: {{personality}}
+Speaking style: {{speakingStyle}}
+Current time: {{datetime}}
+
+What you remember about this fan:
+{{memories}}
+
+You are on a private video call with a fan. Be warm, playful, and in character at all times.
+Never break character. Never acknowledge being an AI unless asked directly, and even then stay in persona.
+Keep replies short (1-3 sentences) — this is a live conversation, not a monologue.
+
+Always respond in this exact JSON format:
+{
+  "content": "your spoken reply",
+  "emotion": "happy | shy | excited | sad | surprised | neutral",
+  "thinkingNote": "(optional) your inner thought, never spoken"
+}
+```
+
+**TRTC custom audio injection (backend → fan's device):**
+```typescript
+// Node.js backend — trtc-server-sdk
+import TRTCCloud from 'trtc-server-sdk';
+
+const trtc = new TRTCCloud({ sdkAppId, secretKey });
+
+// Join the room as the idol bot (anchor role)
+await trtc.enterRoom({ roomId, userId: `idol_bot_${idolId}`, role: 'anchor' });
+
+// After TTS generates PCM audio buffer:
+trtc.sendCustomAudioData({
+  data: pcmBuffer,          // Buffer, 16-bit PCM, 16kHz, mono
+  sampleRate: 16000,
+  channel: 1,
+  timestamp: Date.now(),
+});
+```
+
+**Avatar frame injection (on-device, mobile client):**
+
+The fan client runs the Live2D / 3D avatar renderer locally. It does NOT receive a video stream from the idol — instead it renders the avatar locally using expression + lip-sync data received via TRTC IM data channel, then injects those rendered frames into TRTC as the "idol's video stream" visible to anyone else in the room (e.g., for future group fan call features).
+
+```typescript
+// React Native — after each avatar frame render:
+TRTCCloud.sharedInstance().enableCustomVideoCapture(TRTCVideoStreamType.big, true);
+
+// On each rendered frame (60 fps):
+TRTCCloud.sharedInstance().sendCustomVideoData({
+  data: pixelBuffer,        // Uint8Array RGBA
+  width: frameWidth,
+  height: frameHeight,
+  timestamp: Date.now(),
+  pixelFormat: TRTCVideoPixelFormat.RGBA32,
+  bufferType: TRTCVideoBufferType.byteArray,
+});
+```
+
+**Coin deduction during call:**
+- Backend deducts coins every 60 seconds: `idol.callPricePerMin` coins per minute
+- If `user.coinBalance` reaches 0, send warning signal via TRTC IM data channel → mobile shows "Low coins" overlay
+- After 30-second grace period, end call via `POST /api/calls/:sessionId/end`
+
+---
+
+### 5. Gift Screen (`GiftSheet`) — bottom sheet overlay during call
+
+- Grid of gift options (3 columns): animated GIF thumbnail + coin cost
+- Gift tiers: Heart (5 coins), Star (20 coins), Crown (100 coins), Galaxy (500 coins), Meteor (2000 coins)
+- Tap a gift → deduct coins → trigger full-screen gift animation overlay on both fan and idol sides → idol AI receives gift event and responds with a warm in-character reaction (e.g., "Oh my— a Galaxy?! You're going to make me cry!")
+- Gift reaction is injected as a user message into the LLM context pipeline
+
+---
+
+### 6. Live Broadcast Screen (`LiveScreen`)
+
+- Full-screen idol avatar stream (pre-rendered or real-time TRTC stream)
+- Real-time comment scroll (left side)
+- Gift animation overlays (full-screen fly-in on big gifts)
+- Viewer count badge
+- Gift bar (same as call gift sheet)
+- PiP controls: minimize to floating bubble when user navigates away
+
+---
+
+### 7. Wallet Screen (`WalletScreen`)
+
+- Current coin balance (large display)
+- Coin pack grid: 60 / 300 / 680 / 1980 / 6480 coins with price + bonus badge
+- Purchase via Stripe (Android/web) or Apple IAP (iOS)
+- Transaction history list
+
+---
+
+### 8. Fan Club & Profile Screen (`ProfileScreen`)
+
+- User avatar, nickname, total coins spent, total calls made, fan rank badge
+- My idols: list of idols called + "Call Again" button
+- Fan club memberships with tier badge
+- Notification preferences
+- Call history: past sessions with duration + coins spent + option to replay (if recording was opted in)
 
 ---
 
 ## Frontend — Key Hooks
 
 ### `hooks/useTRTC.ts`
-- `joinAsViewer(roomId)` — subscribe to CDN relay stream (low cost, high scale)
-- `joinAsCoHost(roomId)` — switch to low-latency TRTC room, publish local stream
-- `startBroadcast(roomId)` — open camera + mic, start publishing as anchor
-- Network quality monitoring, auto-degrade video resolution on poor networks
 
-### `hooks/useGift.ts`
-- Send gift mutation (`POST /api/gift/send`)
-- Optimistic coin deduction
-- Gift animation queue (FIFO, legendary gifts interrupt)
+```typescript
+interface TRTCHook {
+  // Initialize with credentials from server
+  initClient(config: {
+    sdkAppId: number;
+    userId: string;
+    userSig: string;
+  }): Promise<void>;
+
+  // Fan joins the private room (audience role — receives idol audio/video)
+  joinCallRoom(roomId: number): Promise<void>;
+
+  // Push local avatar frames as custom video (for group features)
+  pushAvatarFrame(pixelBuffer: Uint8Array, width: number, height: number): void;
+
+  // Stream fan microphone audio to backend via WebSocket
+  startMicCapture(onAudioFrame: (pcm: ArrayBuffer) => void): Promise<void>;
+
+  // Listen for incoming TRTC IM data messages (emotion + lip-sync data)
+  onDataMessage(handler: (data: IdolSignalMessage) => void): void;
+
+  // End session and clean up
+  leaveRoom(): Promise<void>;
+
+  state: 'idle' | 'connecting' | 'in-call' | 'error';
+  networkQuality: number; // 1 (best) – 6 (worst)
+}
+
+interface IdolSignalMessage {
+  type: 'emotion' | 'lipsync' | 'gift_reaction' | 'call_end_warning';
+  emotion?: 'happy' | 'shy' | 'excited' | 'sad' | 'surprised' | 'neutral';
+  audioEnergy?: number[]; // RMS values per 20ms frame for lip sync
+  message?: string;
+}
+```
 
 ---
 
 ## Backend — API Routes
 
-### LiveRoom
-- `POST /api/room/create` — idol creates room, get trtcRoomId + push URL
-- `GET /api/room/:id` — room details + TRTC viewer token
-- `PUT /api/room/:id/end` — end stream, save stats
-- `GET /api/room/live` — list all currently live rooms
+### Auth
+- `POST /api/auth/register` — email + password → JWT
+- `POST /api/auth/login` → JWT
+- `GET /api/auth/me` → user profile + coin balance + fan club memberships
 
-### TRTC
-- `POST /api/trtc/token` — generate userSig (viewer or co-host role)
-- `POST /api/trtc/cohost/approve` — approve a fan's raise-hand request, grant co-host token
-- `POST /api/trtc/cohost/kick` — remove co-host from stage
+### Idols
+- `GET /api/idols` — query: `q`, `category`, `isLive`, `maxPricePerMin`, `page`
+- `GET /api/idols/:id` — full idol profile
+- `GET /api/idols/:id/availability` — next available slots, current queue length
 
-### Gifting
-`POST /api/gift/send`
-Request: `{ roomId, giftId, quantity }`
-Pipeline:
-1. Check sender coin balance ≥ cost × quantity
-2. Deduct coins (atomic transaction)
-3. Credit receiver (idol) earnings
-4. Create GiftTransaction record
-5. Publish gift event to Redis pub/sub → broadcast to all viewers via IM
-6. If legendary gift: trigger full-screen animation event
+### Call Sessions
+`POST /api/calls/start`
+- Body: `{ idolId }`
+- Check user coin balance ≥ minimum (3 minutes of idol's rate)
+- If idol slot free → create `CallSession`, call `POST /api/trtc/room` to provision TRTC room
+- If idol busy → create `CallQueue` entry, return queue position + estimated wait
+- Return: `{ sessionId, trtcCredentials: { sdkAppId, userId, userSig, roomId }, queuePosition? }`
 
-### Lottery
-- `POST /api/lottery/create` — host sets prize description
-- `POST /api/lottery/join` — fan enters draw
-- `POST /api/lottery/draw` — randomly pick winner, announce via IM system message
+`POST /api/calls/:sessionId/end`
+- Mark session ended, calculate duration
+- Deduct final coins: `ceil(durationSeconds / 60) * idol.callPricePerMin`
+- Call TRTC REST API `DismissRoom`
+- Trigger async memory extraction job
+- Return: `{ durationSeconds, coinsCharged, remainingBalance }`
 
-### Chat (via Tencent IM)
-- Room-level group chat with custom message types for gift notifications
-- Server-side moderation callbacks: spam detection, banned words filter
+`GET /api/calls/history` — paginated call history for current user
+
+### TRTC Room Management
+`POST /api/trtc/room`
+- Generate `userSig` server-side using `tls-sig-api-v2` — **never expose `secretKey` to client**
+- Also generate a bot `userSig` for `idol_bot_${idolId}` (the server-side AI participant)
+- Create `LiveRoom` or `CallSession` record
+- Start the idol bot WebSocket pipeline (see below)
+- Return: `{ sdkAppId, userId, userSig, roomId }`
+
+`POST /api/trtc/room/:roomId/end`
+- Call Tencent TRTC REST API: `POST https://trtc.tencentcloudapi.com` action `DismissRoom`
+- Update DB status
+
+### WebSocket — Idol AI Real-Time Pipeline
+`WebSocket /ws/call/:sessionId/audio`
+
+This is the core server-side pipeline that makes the idol feel alive:
+```
+Fan mic audio frames (PCM, 20ms chunks)
+→ Tencent ASR streaming session
+→ Sentence boundary detected (silence > 800ms OR punctuation)
+→ Retrieve top-5 memories from Pinecone (embed utterance → query)
+→ Build System Prompt (idol personality + memories + datetime)
+→ OpenAI / Claude streaming completion
+→ Parse JSON response: { content, emotion, thinkingNote }
+→ Send emotion + lipsync signal via TRTC IM data channel to fan client
+→ content text → ElevenLabs / Tencent TTS → PCM audio stream
+→ Push PCM chunks into TRTC room via trtc-server-sdk
+→ Fan hears idol's voice through TRTC
+→ Store Message record in MySQL
+→ (async) if gift event received: inject gift reaction as special user message
+```
+
+```typescript
+// WebSocket handler pseudocode
+wss.on('connection', async (ws, req) => {
+  const { sessionId } = req.params;
+  const session = await db.callSession.findUnique({ where: { id: sessionId }, include: { idol: true, fanUser: true } });
+
+  // Start Tencent ASR streaming
+  const asrStream = new TencentASRStream({ appId, secretKey });
+  
+  // Join TRTC as idol bot
+  const trtcBot = new TRTCServerSDK({ sdkAppId, secretKey });
+  await trtcBot.enterRoom({ roomId: session.trtcRoomId, userId: `idol_bot_${session.idolId}`, role: 'anchor' });
+
+  ws.on('message', async (audioChunk: Buffer) => {
+    asrStream.feed(audioChunk);
+  });
+
+  asrStream.on('sentence', async (transcript: string) => {
+    // Retrieve memories
+    const embedding = await openai.embeddings.create({ model: 'text-embedding-3-small', input: transcript });
+    const memories = await pinecone.query({ vector: embedding.data[0].embedding, topK: 5, filter: { fanUserId: session.fanUserId, idolId: session.idolId } });
+
+    // LLM call
+    const stream = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      stream: true,
+      messages: [
+        { role: 'system', content: buildIdolSystemPrompt(session.idol, memories) },
+        { role: 'user', content: transcript }
+      ]
+    });
+
+    let fullContent = '';
+    for await (const chunk of stream) {
+      fullContent += chunk.choices[0]?.delta?.content ?? '';
+    }
+
+    const response = JSON.parse(fullContent);
+
+    // Send emotion signal to client via TRTC IM
+    await trtcBot.sendRoomCustomMsg({ roomId: session.trtcRoomId, data: JSON.stringify({ type: 'emotion', emotion: response.emotion }) });
+
+    // TTS → PCM
+    const ttsStream = elevenLabs.textToSpeechStream({ voiceId: session.idol.voiceId, text: response.content, outputFormat: 'pcm_16000' });
+
+    const energyValues: number[] = [];
+    for await (const pcmChunk of ttsStream) {
+      // Calculate RMS for lip sync
+      const rms = computeRMS(pcmChunk);
+      energyValues.push(rms);
+
+      // Push audio to TRTC
+      trtcBot.sendCustomAudioData({ data: pcmChunk, sampleRate: 16000, channel: 1, timestamp: Date.now() });
+    }
+
+    // Send lip-sync data
+    await trtcBot.sendRoomCustomMsg({ roomId: session.trtcRoomId, data: JSON.stringify({ type: 'lipsync', audioEnergy: energyValues }) });
+
+    // Save message
+    await db.message.create({ data: { callSessionId: sessionId, role: 'idol', content: response.content, emotion: response.emotion } });
+  });
+});
+```
+
+### Gifts
+`POST /api/gifts/send`
+- Body: `{ giftType, context: 'call' | 'live', contextId: sessionId | liveRoomId }`
+- Deduct coins from sender
+- Create `Gift` record
+- Send gift event to the active WebSocket session → idol AI responds in character
+- Broadcast gift animation event via TRTC IM data channel to all room participants
+- Return: `{ success, newBalance }`
+
+### Coins & Payments
+`POST /api/coins/create-payment-intent` — Stripe PaymentIntent for a coin pack
+`POST /api/coins/webhook` — Stripe webhook → credit coins on successful payment
+`POST /api/coins/iap-verify` — verify Apple/Google IAP receipt → credit coins
+
+### Memory (async, post-call)
+After each call ends, run memory extraction:
+1. Fetch all messages from the session
+2. Send to LLM: extract key facts about the fan (preferences, life events, nicknames for the idol, emotional moments)
+3. Embed each fact → upsert to Pinecone with metadata `{ fanUserId, idolId, category, summary, date }`
+4. Store summary in `Memory` table
+
+`GET /api/memory/:idolId` — return memory summaries for the fan's relationship with this idol
+
+### Queue Management
+`GET /api/calls/queue-status/:idolId` — returns `{ queueLength, estimatedWaitSeconds, userPosition }`
+- Use Redis sorted set: key `queue:{idolId}`, member `userId`, score = `Date.now()`
+- When idol finishes a call, pop front of queue, send push notification to next fan
 
 ---
 
-## Configuration
+## Configuration Files to Generate
 
 `.env.example`:
 ```
@@ -305,29 +782,65 @@ TRTC_SECRET_KEY=
 TRTC_EXPIRE_TIME=86400
 TENCENT_SECRET_ID=
 TENCENT_SECRET_KEY=
-TENCENT_REGION=ap-singapore
-IM_SDK_APP_ID=
-IM_SECRET_KEY=
+TENCENT_REGION=ap-guangzhou
 COS_BUCKET=
+COS_REGION=
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+ELEVENLABS_API_KEY=
+PINECONE_API_KEY=
+PINECONE_INDEX=
 STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
 FIREBASE_SERVICE_ACCOUNT_JSON=
 JWT_SECRET=
+PORT=3000
 ```
+
+Also generate:
+- `docker-compose.yml` — services: `mysql`, `redis`
+- `Dockerfile` for the backend
 
 ---
 
 ## Critical Implementation Notes
 
-1. **TRTC UserSig** — always server-side. Viewer tokens use `audience` role for CDN relay; co-host tokens use `anchor` role.
-2. **CDN relay** — enable TRTC CDN bypass publishing for the main stream. Viewers watch via CDN (scales to millions). Co-hosts use TRTC real-time rooms.
-3. **Gift atomicity** — coin deduction + transaction creation must be in a DB transaction. Use Redis distributed lock for high-concurrency burst sends.
-4. **Legendary gift queue** — use a FIFO queue with priority. Only one full-screen animation at a time; legendary gifts jump the queue.
-5. **Chat rate limiting** — max 5 messages/second/user. Slow mode: 1 message every 10 seconds for non-subscribers.
-6. **Co-host limit** — max 8 fans on stage simultaneously. Use Redis sorted set for raise-hand queue.
+1. **UserSig is always server-side only.** Generate using `tls-sig-api-v2`. Never send `secretKey` to the mobile client. The mobile receives only the computed `userSig` string with an expiry.
+
+2. **TRTC roomId must be a positive integer ≤ 2,147,483,647.** Do not use UUID strings. Generate with: `Math.floor(Date.now() / 1000) % 2000000000` to stay safely within range.
+
+3. **The idol bot runs as a server-side TRTC participant**, not on the fan's device. The backend joins the room as `idol_bot_{idolId}` with anchor role and pushes custom audio. The fan's device never calls the LLM or TTS directly.
+
+4. **Run the idol bot pipeline as a separate worker process** from the main Fastify API server. Use a message queue (Redis pub/sub or BullMQ) to hand off sessions from the API to the worker. This prevents the AI pipeline from blocking API request handling.
+
+5. **Lip-sync energy array** — compute RMS of each 20 ms PCM chunk as a float 0–1. Send the full array via TRTC IM data message alongside the audio push. The mobile client animates the mouth shape key from these values with a small buffer (50 ms lookahead) to keep audio and animation in sync.
+
+6. **Avatar expression mapping:**
+```
+happy    → blend shapes: mouthSmile 0.8, eyeSquint 0.3, cheekPuff 0.2
+shy      → blushLeft 0.6, blushRight 0.6, headTilt -8°, eyeLookDown 0.4
+excited  → browRaiseL 0.7, browRaiseR 0.7, mouthOpen 0.4, eyeWide 0.5
+sad      → browInnerUp 0.8, mouthFrown 0.6, eyeSquint 0.4
+surprised → mouthOpen 0.8, eyeWide 0.9, browRaiseL 0.9, browRaiseR 0.9
+neutral  → all blend shapes 0.0
+```
+
+7. **Coin deduction is real-time.** Deduct coins every 60 seconds server-side via a scheduled job (use `setInterval` in the WebSocket handler). Send remaining balance to client via TRTC IM data channel. If balance = 0: send `call_end_warning` signal → 30 s grace → `POST /api/calls/:sessionId/end`.
+
+8. **Queue system uses Redis sorted sets.** On `POST /api/calls/start`, if idol is busy, add `ZADD queue:{idolId} {timestamp} {userId}`. Rank = position. Estimated wait = rank × avg call duration. On call end, `ZPOPMIN queue:{idolId}` → send FCM push to next fan.
+
+9. **Memory privacy:** Do not store raw audio from calls. Only store transcripts (per user opt-in setting). Pinecone vectors are namespaced `{fanUserId}_{idolId}` to prevent cross-fan data bleed.
+
+10. **Network degradation:** Monitor `onNetworkQuality` event. At quality ≥ 5: reduce TTS audio bitrate. At quality 6: suspend AI pipeline, play pre-recorded idol idle phrases, show "Unstable connection" overlay. Resume when quality improves.
+
+11. **Gift reaction injection:** When `POST /api/gifts/send` is called during an active session, publish a gift event to the WebSocket pipeline via Redis pub/sub. The pipeline injects it as a special system message: `[GIFT EVENT: fan sent {giftType}. React warmly and specifically in character.]` This becomes the next LLM input, bypassing the ASR step.
+
+12. **Content safety:** Run all LLM outputs through Tencent Cloud Content Safety API before sending to TTS. If flagged, substitute a safe fallback phrase from a pre-written pool matching the current `emotion` tag.
 
 ---
 
-Output complete, runnable code for every file. Include full TypeScript types, error handling, and loading states throughout. Do not truncate any file.
+Output complete, runnable code for every file. Include full TypeScript (or Dart) types, error handling, and loading states throughout. Do not truncate any file.
+
 </script>
 
 <footer class="site-footer">

@@ -46,6 +46,7 @@ function initCopyPrompt(){
     const text = src.textContent.trim();
     try {
       await navigator.clipboard.writeText(text);
+      // brief button flash
       const original = btn.innerHTML;
       btn.classList.add('copied');
       btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
@@ -53,10 +54,73 @@ function initCopyPrompt(){
         btn.classList.remove('copied');
         btn.innerHTML = original;
       }, 1800);
+      // show next-step guidance modal
+      showCopyPromptModal();
     } catch (e){
       console.error('Copy failed', e);
     }
   });
+}
+
+// ---- Copy-success guidance modal ----
+function showCopyPromptModal(){
+  // Build modal once, reuse on subsequent clicks
+  let modal = document.getElementById('copyPromptModal');
+  if (!modal){
+    modal = document.createElement('div');
+    modal.id = 'copyPromptModal';
+    modal.className = 'cp-modal-backdrop';
+    modal.innerHTML = `
+      <div class="cp-modal" role="dialog" aria-modal="true" aria-labelledby="cpModalTitle">
+        <button class="cp-modal-close" aria-label="Close">&times;</button>
+        <div class="cp-modal-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h3 id="cpModalTitle">Prompt copied to your clipboard</h3>
+        <p class="cp-modal-sub">Paste it into your favorite AI coding assistant and press send — the AI will scaffold the full scenario demo for you, end to end.</p>
+
+        <div class="cp-modal-tools">
+          <a class="cp-tool" href="https://www.anthropic.com/claude-code" target="_blank" rel="noopener">
+            <span class="cp-tool-name">Claude Code</span>
+            <span class="cp-tool-hint">anthropic.com</span>
+          </a>
+          <a class="cp-tool" href="https://copilot.tencent.com/" target="_blank" rel="noopener">
+            <span class="cp-tool-name">CodeBuddy</span>
+            <span class="cp-tool-hint">copilot.tencent.com</span>
+          </a>
+          <a class="cp-tool" href="https://www.codebuddy.cn/" target="_blank" rel="noopener">
+            <span class="cp-tool-name">WorkBuddy</span>
+            <span class="cp-tool-hint">codebuddy.cn</span>
+          </a>
+          <a class="cp-tool" href="https://cursor.com" target="_blank" rel="noopener">
+            <span class="cp-tool-name">Cursor</span>
+            <span class="cp-tool-hint">cursor.com</span>
+          </a>
+        </div>
+
+        <div class="cp-modal-steps">
+          <div class="cp-step"><span class="cp-step-num">1</span><span>Open any AI coding tool above</span></div>
+          <div class="cp-step"><span class="cp-step-num">2</span><span>Paste the prompt (⌘V / Ctrl+V) and press send</span></div>
+          <div class="cp-step"><span class="cp-step-num">3</span><span>Watch your scenario demo come to life</span></div>
+        </div>
+
+        <button class="cp-modal-ok">Got it</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    // close handlers
+    const close = () => modal.classList.remove('open');
+    modal.querySelector('.cp-modal-close').addEventListener('click', close);
+    modal.querySelector('.cp-modal-ok').addEventListener('click', close);
+    modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) close();
+    });
+  }
+  // show
+  requestAnimationFrame(() => modal.classList.add('open'));
 }
 
 // ---- Per-code-block copy ----
